@@ -1,0 +1,5 @@
+forge-std/=node_modules/forge-std/src/
+ds-test/=node_modules/ds-test/src/
+solecs/=node_modules/@latticexyz/solecs/src/
+memmove/=node_modules/memmove/src/
+std-contracts/=node_modules/@latticexyz/std-contracts/src/
