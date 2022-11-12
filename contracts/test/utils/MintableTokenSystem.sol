@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.17;
 
-import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 import { MudERC1155 } from '../../token/ERC1155/MudERC1155.sol';
 
 uint256 constant ID = uint256(keccak256("test.system.MintableTokenSystem"));

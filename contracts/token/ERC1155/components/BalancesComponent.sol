@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.17;
 
-import { BareComponent } from "solecs/BareComponent.sol";
-import { LibTypes } from "solecs/LibTypes.sol";
+import { BareComponent } from "@latticexyz/solecs/src/BareComponent.sol";
+import { LibTypes } from "@latticexyz/solecs/src/LibTypes.sol";
 
 /**
  * @dev Balance entity = hashed(account, id)

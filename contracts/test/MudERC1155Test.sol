@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 
 import { Test } from "./Test.sol";
 
-import { World } from "solecs/World.sol";
+import { World } from "@latticexyz/solecs/src/World.sol";
 import { MintableTokenSystem, ID as MintableTokenSystemID } from "./utils/MintableTokenSystem.sol";
 import { MintSystem, ID as MintSystemID } from "./utils/MintSystem.sol";
 import { TransferSystem, ID as TransferSystemID } from "./utils/TransferSystem.sol";

@@ -2,8 +2,8 @@
 
 pragma solidity ^0.8.17;
 
-import { IUint256Component } from "solecs/interfaces/IUint256Component.sol";
-import { IWorld } from "solecs/interfaces/IWorld.sol";
+import { IUint256Component } from "@latticexyz/solecs/src/interfaces/IUint256Component.sol";
+import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 
 library SystemStorage {
   bytes32 internal constant STORAGE_SLOT =

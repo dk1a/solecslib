@@ -3,11 +3,11 @@
 pragma solidity ^0.8.17;
 
 // erc165
-import { ISystem } from "solecs/interfaces/ISystem.sol";
+import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 // ECS
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { System } from "solecs/System.sol";
+import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
+import { System } from "@latticexyz/solecs/src/System.sol";
 
 // erc1155
 import { ERC1155 } from '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';

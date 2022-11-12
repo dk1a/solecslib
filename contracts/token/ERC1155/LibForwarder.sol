@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 
 import { AddressUtils } from "@solidstate/contracts/utils/AddressUtils.sol";
 import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
-import { ISystem } from "solecs/interfaces/ISystem.sol";
+import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 /**
  * @title Helper functions to forward sender to MudERC1155

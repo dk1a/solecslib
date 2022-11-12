@@ -6,11 +6,11 @@ pragma solidity ^0.8.17;
 import { ERC165, IERC165 } from "@solidstate/contracts/introspection/ERC165.sol";
 import { ERC165Storage } from "@solidstate/contracts/introspection/ERC165Storage.sol";
 import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
-import { ISystem } from "solecs/interfaces/ISystem.sol";
+import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 // ECS
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { System } from "solecs/System.sol";
+import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
+import { System } from "@latticexyz/solecs/src/System.sol";
 import { BalancesComponent, getBalanceEntity } from "./components/BalancesComponent.sol";
 import { OperatorApprovalsComponent, getOperatorApprovalEntity } from "./components/OperatorApprovalsComponent.sol";
 

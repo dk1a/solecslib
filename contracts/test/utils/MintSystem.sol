@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.17;
 
-import { IWorld } from "solecs/interfaces/IWorld.sol";
-import { System, ISystem } from "solecs/System.sol";
-import { getAddressById } from "solecs/utils.sol";
+import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
+import { System, ISystem } from "@latticexyz/solecs/src/System.sol";
+import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
 import { LibForwarder } from "../../token/ERC1155/LibForwarder.sol";
 
 uint256 constant ID = uint256(keccak256("test.system.MintSystem"));
