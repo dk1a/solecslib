@@ -7,7 +7,7 @@ import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
 import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 /**
- * @title Helper functions to forward sender to MudERC1155
+ * @title Helper functions to forward sender to ERC1155BaseSystem
  */
 library LibForwarder {
   function execute(

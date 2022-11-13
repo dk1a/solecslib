@@ -2,14 +2,14 @@
 
 pragma solidity ^0.8.17;
 
-import { Test } from "./Test.sol";
+import { PRBTest } from "@prb/test/src/PRBTest.sol";
 
 import { World } from "@latticexyz/solecs/src/World.sol";
-import { MintableTokenSystem, ID as MintableTokenSystemID } from "./utils/MintableTokenSystem.sol";
+import { ERC1155BaseSystemMock, ID as ERC1155BaseSystemMockID } from "./utils/ERC1155BaseSystemMock.sol";
 import { MintSystem, ID as MintSystemID } from "./utils/MintSystem.sol";
 import { TransferSystem, ID as TransferSystemID } from "./utils/TransferSystem.sol";
 
-contract MudERC1155Test is Test {
+contract ERC1155Test is PRBTest {
   address deployer = address(bytes20(keccak256("deployer")));
   
   address alice = address(bytes20(keccak256("alice")));
@@ -18,10 +18,10 @@ contract MudERC1155Test is Test {
 
   World world;
   // ERC1155 and ERC2771Context + execute which mints if isTrustedForwarder
-  MintableTokenSystem tokenSystem;
-  // forwards mint args and msgSender to tokenSystem's execute
+  ERC1155BaseSystemMock erc1155System;
+  // forwards mint args and msgSender to erc1155System's execute
   MintSystem mintSystem;
-  // forwards safeTransferFrom args and msgSender to tokenSystem's safeTransferFrom
+  // forwards safeTransferFrom args and msgSender to erc1155System's safeTransferFrom
   TransferSystem transferSystem;
   
   function setUp() public virtual {
@@ -33,16 +33,16 @@ contract MudERC1155Test is Test {
 
     address components = address(world.components());
     // deploy systems
-    tokenSystem = new MintableTokenSystem(world, components);
-    mintSystem = new MintSystem(world, components, MintableTokenSystemID);
-    transferSystem = new TransferSystem(world, components, MintableTokenSystemID);
+    erc1155System = new ERC1155BaseSystemMock(world, components);
+    mintSystem = new MintSystem(world, components, ERC1155BaseSystemMockID);
+    transferSystem = new TransferSystem(world, components, ERC1155BaseSystemMockID);
     // register systems
-    world.registerSystem(address(tokenSystem), MintableTokenSystemID);
+    world.registerSystem(address(erc1155System), ERC1155BaseSystemMockID);
     world.registerSystem(address(mintSystem), MintSystemID);
     world.registerSystem(address(transferSystem), TransferSystemID);
-    // allow forwarding msg.sender to tokenSystem
-    tokenSystem.setTrustedForwarder(address(mintSystem), true);
-    tokenSystem.setTrustedForwarder(address(transferSystem), true);
+    // allow forwarding msg.sender to erc1155System
+    erc1155System.setTrustedForwarder(address(mintSystem), true);
+    erc1155System.setTrustedForwarder(address(transferSystem), true);
 
     vm.stopPrank();
   }

@@ -2,12 +2,12 @@
 
 pragma solidity ^0.8.17;
 
-import { BalancesComponent } from "./components/BalancesComponent.sol";
-import { OperatorApprovalsComponent } from "./components/OperatorApprovalsComponent.sol";
+import { BalancesComponent } from "../components/BalancesComponent.sol";
+import { OperatorApprovalsComponent } from "../components/OperatorApprovalsComponent.sol";
 
-library MudERC1155Storage {
+library ERC1155BaseDataComponentsStorage {
   bytes32 internal constant STORAGE_SLOT =
-    keccak256('mud-erc1155.contracts.storage.MudERC1155');
+    keccak256('solecslib.contracts.storage.ERC1155BaseDataComponents');
 
   struct Layout {
     BalancesComponent balancesComponent;

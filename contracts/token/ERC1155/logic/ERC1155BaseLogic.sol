@@ -3,18 +3,18 @@
 pragma solidity ^0.8.17;
 
 import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
-import { ERC1155BalanceInternal } from "./internal/ERC1155BalanceInternal.sol";
-import { ERC1155AccessInternal } from "./internal/ERC1155AccessInternal.sol";
+import { ERC1155BalanceInternal } from "./ERC1155BalanceInternal.sol";
+import { ERC1155AccessInternal } from "./ERC1155AccessInternal.sol";
 
 /**
  * @title Storage-agnostic ERC1155 implementation
  * @dev Derived from https://github.com/solidstate-network/solidstate-solidity/ (MIT)
  * and https://github.com/OpenZeppelin/openzeppelin-contracts/ (MIT)
  */
-abstract contract ERC1155Base is
+abstract contract ERC1155BaseLogic is
   IERC1155,
-  ERC1155BalanceInternal,
-  ERC1155AccessInternal
+  ERC1155AccessInternal,
+  ERC1155BalanceInternal
 {
   /**
    * @inheritdoc IERC1155

@@ -7,7 +7,7 @@ import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 
 library SystemStorage {
   bytes32 internal constant STORAGE_SLOT =
-    keccak256('solecslib.contracts.mud.storage.SystemStorage');
+    keccak256('solecslib.contracts.storage.SystemStorage');
 
   struct Layout {
     IUint256Component components;

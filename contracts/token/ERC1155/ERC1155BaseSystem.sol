@@ -14,19 +14,22 @@ import { System } from "@latticexyz/solecs/src/System.sol";
 import { BalancesComponent, getBalanceEntity } from "./components/BalancesComponent.sol";
 import { OperatorApprovalsComponent, getOperatorApprovalEntity } from "./components/OperatorApprovalsComponent.sol";
 
-// erc2771 (forwarding)
+// ERC2771 (forwarding)
 import { Context } from "@openzeppelin/contracts/utils/Context.sol";
 import { ERC2771Context } from "../../metatx/ERC2771Context.sol";
 
-// erc1155
-import { ERC1155Base } from "./ERC1155Base.sol";
-import { MudERC1155Storage } from "./MudERC1155Storage.sol";
+// ERC1155 logic and data provider
+import { ERC1155BaseLogic } from "./logic/ERC1155BaseLogic.sol";
+import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataComponents.sol";
+
+import { ERC1155AccessInternal } from "./logic/ERC1155AccessInternal.sol";
+import { ERC1155BalanceInternal } from "./logic/ERC1155BalanceInternal.sol";
 
 /**
  * @title ERC1155 and ECS System, with components and msg.sender forwarding.
  * @dev ALL balance/approval component changes MUST be forwarded through this system.
  * 
- * See MudERC1155Simple for a minimal implementation without components and forwarding.
+ * See ERC1155BaseSystemSimple for a minimal implementation without components and forwarding.
  *
  * TODO no uri metadata here (which is fine for base IERC1155), maybe make an optional extension
  * TODO same thing for totalSupply and enumeration
@@ -40,10 +43,12 @@ import { MudERC1155Storage } from "./MudERC1155Storage.sol";
  * using it like an external utility would basically be an unregistered system;
  * it can't be just a library - it has events and is bound to specific components;
  */
-abstract contract MudERC1155 is
+//ERC1155Base_ProviderECS,
+abstract contract ERC1155BaseSystem is
   ERC2771Context,
   ERC165,
-  ERC1155Base,
+  ERC1155BaseDataComponents,
+  ERC1155BaseLogic,
   System
 {
   using ERC165Storage for ERC165Storage.Layout;
@@ -57,11 +62,7 @@ abstract contract MudERC1155 is
   ) System(_world, _components) {
     // create components
     // (they're tightly coupled to this system, so making them separately isn't useful)
-    MudERC1155Storage.layout().balancesComponent
-      = new BalancesComponent(address(world), balanceComponentId);
-
-    MudERC1155Storage.layout().operatorApprovalsComponent
-      = new OperatorApprovalsComponent(address(world), operatorApprovalsComponentId);
+    _initERC1155BaseDataComponents(world, balanceComponentId, operatorApprovalsComponentId);
 
     // register interfaces
     ERC165Storage.Layout storage erc165 = ERC165Storage.layout();
@@ -114,37 +115,11 @@ abstract contract MudERC1155 is
     return super._msgData();
   }
 
-  // BALANCE
-  function balancesComponent() public view returns (BalancesComponent) {
-    return MudERC1155Storage.layout().balancesComponent;
-  }
-
-  // balance getter
-  function _get_balances(
-    address account,
-    uint256 id
-  ) internal view virtual override returns (uint256) {
-    uint256 entity = getBalanceEntity(account, id);
-    return balancesComponent().getValue(entity);
-  }
-
-  // balance setter
-  function _set_balances(
-    address account,
-    uint256 id,
-    uint256 value
-  ) internal virtual override {
-    uint256 entity = getBalanceEntity(account, id);
-    if (value > 0) {
-      balancesComponent().set(entity, value);
-    } else {
-      balancesComponent().remove(entity);
-    }
-  }
+  
 
   // OPERATOR APPROVAL
-  function operatorApprovalsComponent() public view returns (OperatorApprovalsComponent) {
-    return MudERC1155Storage.layout().operatorApprovalsComponent;
+ /* function operatorApprovalsComponent() public view returns (OperatorApprovalsComponent) {
+    return ERC1155BaseSystemStorage.layout().operatorApprovalsComponent;
   }
 
   // access getter
@@ -168,5 +143,5 @@ abstract contract MudERC1155 is
     } else {
       operatorApprovalsComponent().remove(entity);
     }
-  }
+  }*/
 }
