@@ -11,8 +11,6 @@ import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 // ECS
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 import { System } from "@latticexyz/solecs/src/System.sol";
-import { BalancesComponent, getBalanceEntity } from "./components/BalancesComponent.sol";
-import { OperatorApprovalsComponent, getOperatorApprovalEntity } from "./components/OperatorApprovalsComponent.sol";
 
 // ERC2771 (forwarding)
 import { Context } from "@openzeppelin/contracts/utils/Context.sol";
@@ -21,9 +19,6 @@ import { ERC2771Context } from "../../metatx/ERC2771Context.sol";
 // ERC1155 logic and data provider
 import { ERC1155BaseLogic } from "./logic/ERC1155BaseLogic.sol";
 import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataComponents.sol";
-
-import { ERC1155AccessInternal } from "./logic/ERC1155AccessInternal.sol";
-import { ERC1155BalanceInternal } from "./logic/ERC1155BalanceInternal.sol";
 
 /**
  * @title ERC1155 and ECS System, with components and msg.sender forwarding.
@@ -43,7 +38,6 @@ import { ERC1155BalanceInternal } from "./logic/ERC1155BalanceInternal.sol";
  * using it like an external utility would basically be an unregistered system;
  * it can't be just a library - it has events and is bound to specific components;
  */
-//ERC1155Base_ProviderECS,
 abstract contract ERC1155BaseSystem is
   ERC2771Context,
   ERC165,
@@ -114,34 +108,4 @@ abstract contract ERC1155BaseSystem is
   {
     return super._msgData();
   }
-
-  
-
-  // OPERATOR APPROVAL
- /* function operatorApprovalsComponent() public view returns (OperatorApprovalsComponent) {
-    return ERC1155BaseSystemStorage.layout().operatorApprovalsComponent;
-  }
-
-  // access getter
-  function _get_operatorApprovals(
-    address account,
-    address operator
-  ) internal view virtual override returns (bool) {
-    uint256 entity = getOperatorApprovalEntity(account, operator);
-    return operatorApprovalsComponent().getValue(entity);
-  }
-
-  // access setter
-  function _set_operatorApprovals(
-    address account,
-    address operator,
-    bool value
-  ) internal virtual override {
-    uint256 entity = getOperatorApprovalEntity(account, operator);
-    if (value) {
-      operatorApprovalsComponent().set(entity);
-    } else {
-      operatorApprovalsComponent().remove(entity);
-    }
-  }*/
 }
