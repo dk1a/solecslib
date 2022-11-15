@@ -16,7 +16,13 @@ library LibForwarder {
 
     bytes memory arguments
   ) internal returns (bytes memory) {
-    return target.execute(abi.encodePacked(arguments, msgSender));
+    return functionCall(
+      address(target),
+      msgSender,
+      ISystem.execute.selector,
+      // encode here is important, just like in the other calls
+      abi.encode(arguments)
+    );
   }
 
   function functionCall(

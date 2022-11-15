@@ -22,24 +22,7 @@ contract ERC1155BaseSystemMock is ERC1155BaseSystem {
     address _components
   ) ERC1155BaseSystem(_world, _components, balancesComponentId, operatorApprovalsComponentId) {}
 
-  function execute(bytes memory args) public virtual override returns (bytes memory) {
-    // limited execute with only 1 branch for testing
-    if (isTrustedForwarder(msg.sender)) {
-      _executeMint(args);
-    } else {
-      revert ERC1155BaseSystemMock__InvalidCaller();
-    }
-
-    return '';
-  }
-
-  function _executeMint(bytes memory args) private {
-    (address account, uint256 id, uint256 amount, bytes memory data)
-      = abi.decode(args, (address, uint256, uint256, bytes));
-
-    _safeMint(account, id, amount, data);
-  }
-
+  // this is for hardhat tests
   function mint(
     address account,
     uint256 id,
@@ -48,6 +31,7 @@ contract ERC1155BaseSystemMock is ERC1155BaseSystem {
     _safeMint(account, id, amount, '');
   }
 
+  // this is for hardhat tests
   function burn(
     address account,
     uint256 id,

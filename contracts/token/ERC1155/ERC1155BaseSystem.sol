@@ -20,6 +20,13 @@ import { ERC2771Context } from "../../metatx/ERC2771Context.sol";
 import { ERC1155BaseLogic } from "./logic/ERC1155BaseLogic.sol";
 import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataComponents.sol";
 
+enum ERC1155ExecuteType {
+  SAFE_MINT_BATCH,
+  BURN_BATCH,
+  SAFE_TRANSFER_BATCH,
+  ARBITRARY_SAFE_TRANSFER_BATCH
+}
+
 /**
  * @title ERC1155 and ECS System, with components and msg.sender forwarding.
  * @dev ALL balance/approval component changes MUST be forwarded through this system.
@@ -46,6 +53,9 @@ abstract contract ERC1155BaseSystem is
   System
 {
   using ERC165Storage for ERC165Storage.Layout;
+
+  error ERC1155BaseSystem__NotTrustedExecutor();
+  error ERC1155BaseSystem__InvalidExecuteType();
 
   // TODO diamond-compatible version?
   constructor(
@@ -81,10 +91,118 @@ abstract contract ERC1155BaseSystem is
     _setTrustedForwarder(forwarder, state);
   }
 
-  // TODO should execute have a default implementation?
-  /*function execute(bytes memory) public virtual override returns (bytes memory) {
-    revert('PH');
-  }*/
+  /**
+   * @dev Requirement to execute special methods like mint, burn, arbitrary transfer.
+   * Reuses trusted forwarder to also be trusted executor, which is fine for Systems.
+   * But if you want to also use gas relays, you should separate trusted executors!
+   */
+  function _requireTrustedExecutor() internal virtual view {
+    if (!isTrustedForwarder(msg.sender)) revert ERC1155BaseSystem__NotTrustedExecutor();
+  }
+
+  /**
+   * @notice Does an action based on ERC1155ExecuteType
+   * @dev The actions also have individual methods with specific arguments.
+   * Only for trusted forwarders; except SAFE_TRANSFER_BATCH,
+   * which just calls safeBatchTransferFrom with its usual requirements
+   */
+  function execute(bytes memory args) public virtual override returns (bytes memory) {
+    _requireTrustedExecutor();
+    
+    (ERC1155ExecuteType execType, bytes memory innerArgs)
+      = abi.decode(args, (ERC1155ExecuteType, bytes));
+
+    // mint
+    if (execType == ERC1155ExecuteType.SAFE_MINT_BATCH) {
+      (
+        address account,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+      ) = abi.decode(innerArgs, (address, uint256[], uint256[], bytes));
+      executeSafeMintBatch(account, ids, amounts, data);
+
+    // burn
+    } else if (execType == ERC1155ExecuteType.BURN_BATCH) {
+      (
+        address account,
+        uint256[] memory ids,
+        uint256[] memory amounts
+      ) = abi.decode(innerArgs, (address, uint256[], uint256[]));
+      executeBurnBatch(account, ids, amounts);
+
+    // transfer (approval-checked)
+    } else if (execType == ERC1155ExecuteType.SAFE_TRANSFER_BATCH) {
+      (
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+      ) = abi.decode(innerArgs, (address, address, uint256[], uint256[], bytes));
+      safeBatchTransferFrom(from, to, ids, amounts, data);
+
+    // transfer (from arbitrary account)
+    } else if (execType == ERC1155ExecuteType.ARBITRARY_SAFE_TRANSFER_BATCH) {
+      (
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+      ) = abi.decode(innerArgs, (address, address, address, uint256[], uint256[], bytes));
+      executeArbitrarySafeTransferBatch(operator, from, to, ids, amounts, data);
+
+    } else {
+      revert ERC1155BaseSystem__InvalidExecuteType();
+    }
+
+    return '';
+  }
+
+  /**
+   * @notice Mint tokens to any account
+   * @dev only for trusted forwarders
+   */
+  function executeSafeMintBatch(
+    address account,
+    uint256[] memory ids,
+    uint256[] memory amounts,
+    bytes memory data
+  ) public virtual {
+    _requireTrustedExecutor();
+    _safeMintBatch(account, ids, amounts, data);
+  }
+
+  /**
+   * @notice Burn tokens from any account
+   * @dev only for trusted forwarders
+   */
+  function executeBurnBatch(
+    address account,
+    uint256[] memory ids,
+    uint256[] memory amounts
+  ) public virtual {
+    _requireTrustedExecutor();
+    _burnBatch(account, ids, amounts);
+  }
+
+  /**
+   * @notice Transfer tokens from any account without needing approval
+   * @dev only for trusted forwarders
+   */
+  function executeArbitrarySafeTransferBatch(
+    address operator,
+    address from,
+    address to,
+    uint256[] memory ids,
+    uint256[] memory amounts,
+    bytes memory data
+  ) public virtual {
+    _requireTrustedExecutor();
+    _safeTransferBatch(operator, from, to, ids, amounts, data);
+  }
 
   // CONTEXT
   // trusted forwarding

@@ -9,9 +9,9 @@ import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
 import { LibForwarder } from "../../token/ERC1155/LibForwarder.sol";
 import { ERC1155ExecuteType } from "../../token/ERC1155/ERC1155BaseSystem.sol";
 
-uint256 constant ID = uint256(keccak256("test.system.MintSystem"));
+uint256 constant ID = uint256(keccak256("test.system.BurnSystem"));
 
-contract MintSystem is System {
+contract BurnSystem is System {
   uint256 immutable erc1155SystemId;
 
   constructor(
@@ -25,10 +25,9 @@ contract MintSystem is System {
   function executeTyped(
     address account,
     uint256[] memory ids,
-    uint256[] memory amounts,
-    bytes memory data
+    uint256[] memory amounts
   ) public {
-    execute(abi.encode(account, ids, amounts, data));
+    execute(abi.encode(account, ids, amounts));
   }
 
   function execute(bytes memory arguments) public override returns (bytes memory) {
@@ -40,7 +39,7 @@ contract MintSystem is System {
     LibForwarder.execute(
       erc1155System,
       msg.sender,
-      abi.encode(ERC1155ExecuteType.SAFE_MINT_BATCH, arguments)
+      abi.encode(ERC1155ExecuteType.BURN_BATCH, arguments)
     );
 
     return '';

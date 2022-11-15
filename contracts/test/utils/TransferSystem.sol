@@ -5,7 +5,10 @@ pragma solidity ^0.8.17;
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 import { System } from "@latticexyz/solecs/src/System.sol";
 import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
+
 import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
+import { IERC1155Receiver } from '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
+
 import { LibForwarder } from "../../token/ERC1155/LibForwarder.sol";
 
 uint256 constant ID = uint256(keccak256("test.system.TransferSystem"));
@@ -37,5 +40,27 @@ contract TransferSystem is System {
     );
 
     return '';
+  }
+
+  // to test transfer from self
+  function onERC1155Received(
+    address,
+    address,
+    uint256,
+    uint256,
+    bytes calldata
+  ) public pure returns (bytes4) {
+    return this.onERC1155Received.selector;
+  }
+
+  // to test transfer from self
+  function onERC1155BatchReceived(
+    address,
+    address,
+    uint256[] calldata,
+    uint256[] calldata,
+    bytes calldata
+  ) public pure returns (bytes4) {
+    return this.onERC1155BatchReceived.selector;
   }
 }
