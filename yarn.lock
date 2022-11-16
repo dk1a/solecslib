@@ -352,15 +352,15 @@
     "@ethersproject/properties" "^5.7.0"
     "@ethersproject/strings" "^5.7.0"
 
-"@latticexyz/solecs@^1.26.0":
-  version "1.26.0"
-  resolved "https://registry.yarnpkg.com/@latticexyz/solecs/-/solecs-1.26.0.tgz#a8a6e3acfabacd4302456b90ab8d6313a15ace3f"
-  integrity sha512-eR4Tj0kx0XGNGkS1GV1Zyui4+k9QD5VJRTgp3leMdrbOWkWwtiXPtrkTfJJvBE5Gtc0p4aFO68K5d9jMgCH9hA==
+"@latticexyz/solecs@^1.27.1":
+  version "1.27.1"
+  resolved "https://registry.yarnpkg.com/@latticexyz/solecs/-/solecs-1.27.1.tgz#2cabe69f79bd88b3c2c7d6d248de2dc04b1a4c13"
+  integrity sha512-/nKnhgUG+oRN7iRlnHZ6lAnRZNHUMiRdYCPdYQlMQHtEGZFtXCQlAfsJcxnqLHlmMcI1xJ+2qzCa3jxUnVddHw==
 
-"@latticexyz/std-contracts@^1.26.0":
-  version "1.26.0"
-  resolved "https://registry.yarnpkg.com/@latticexyz/std-contracts/-/std-contracts-1.26.0.tgz#d5a5947967642ce41090b97a48deefb41d414695"
-  integrity sha512-uX73W4Oq5D2vp+Q8kM/lSgcAjMNppQP1nbcHOHGgrJsApzJjSTLUDoDaHAjlZLmX2gi50ppENHdbG7fR/gsiKQ==
+"@latticexyz/std-contracts@^1.27.1":
+  version "1.27.1"
+  resolved "https://registry.yarnpkg.com/@latticexyz/std-contracts/-/std-contracts-1.27.1.tgz#23be4b44ec163768371abff95516255fa47fbec7"
+  integrity sha512-uj4zR5RuWhvviNoyIGjmB9VwY4+r0WH3ry2XnEha1TusDn3eI1Q0reu+HNso2rUbER6nl5FX92YR+caJNneqjQ==
 
 "@metamask/eth-sig-util@^4.0.0":
   version "4.0.1"

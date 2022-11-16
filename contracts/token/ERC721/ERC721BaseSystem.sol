@@ -18,7 +18,7 @@ import { ERC721BaseLogic } from "./logic/ERC721BaseLogic.sol";
 import { ERC721BaseDataComponents } from "./data-providers/ERC721BaseDataComponents.sol";
 
 /**
- * @title ERC721 and ECS System that uses components
+ * @title ERC721 and ECS System that uses components.
  * @dev ALL component changes MUST go through this system.
  * 
  * TODO metadata, enumerable?
@@ -32,7 +32,6 @@ abstract contract ERC721BaseSystem is
 {
   using ERC165Storage for ERC165Storage.Layout;
 
-  error ERC721BaseSystem__NotTrustedExecutor();
   error ERC721BaseSystem__InvalidExecuteSelector();
 
   // TODO diamond-compatible version?
@@ -113,7 +112,6 @@ abstract contract ERC721BaseSystem is
 
   /**
    * @notice Mint token to any account
-   * @dev only for trusted forwarders
    */
   function executeSafeMint(
     address account,
@@ -125,7 +123,6 @@ abstract contract ERC721BaseSystem is
 
   /**
    * @notice Burn any existing token
-   * @dev only for trusted forwarders
    */
   function executeBurn(
     uint256 tokenId
@@ -135,9 +132,8 @@ abstract contract ERC721BaseSystem is
 
   /**
    * @notice Transfer with approval check for `operator`
-   * @dev only for trusted executors
    *
-   * This can be used for transfer forwarding
+   * This can be used to forward transfers
    */
   function executeSafeTransfer(
     address operator,
@@ -152,7 +148,6 @@ abstract contract ERC721BaseSystem is
 
   /**
    * @notice Transfer tokens from any account without needing approval
-   * @dev only for trusted executors
    */
   function executeArbitrarySafeTransfer(
     address from,

@@ -3,8 +3,7 @@
 pragma solidity ^0.8.17;
 
 import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
-import { ERC1155BalanceInternal } from "./ERC1155BalanceInternal.sol";
-import { ERC1155AccessInternal } from "./ERC1155AccessInternal.sol";
+import { ERC1155BaseInternal } from "./ERC1155BaseInternal.sol";
 
 /**
  * @title Storage-agnostic ERC1155 implementation
@@ -13,8 +12,7 @@ import { ERC1155AccessInternal } from "./ERC1155AccessInternal.sol";
  */
 abstract contract ERC1155BaseLogic is
   IERC1155,
-  ERC1155AccessInternal,
-  ERC1155BalanceInternal
+  ERC1155BaseInternal
 {
   /**
    * @inheritdoc IERC1155
@@ -52,14 +50,16 @@ abstract contract ERC1155BaseLogic is
    * @inheritdoc IERC1155
    */
   function isApprovedForAll(address account, address operator) public view returns (bool) {
-    return _isApprovedForAll(account, operator);
+    return _get_operatorApproval(account, operator);
   }
 
   /**
    * @inheritdoc IERC1155
    */
   function setApprovalForAll(address operator, bool status) public {
-    _setApprovalForAll(operator, status);
+    if (_msgSender() == operator) revert ERC1155Base__SelfApproval();
+    _set_operatorApproval(_msgSender(), operator, status);
+    emit ApprovalForAll(_msgSender(), operator, status);
   }
 
   /**
@@ -88,5 +88,11 @@ abstract contract ERC1155BaseLogic is
   ) public virtual {
     _requireOwnerOrApproved(from);
     _safeTransferBatch(_msgSender(), from, to, ids, amounts, data);
+  }
+
+  function _requireOwnerOrApproved(address from) internal view {
+    if (from != _msgSender() && !isApprovedForAll(from, _msgSender())) {
+      revert ERC1155Base__NotOwnerOrApproved();
+    }
   }
 }

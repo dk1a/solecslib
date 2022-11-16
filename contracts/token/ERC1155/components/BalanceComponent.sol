@@ -6,13 +6,13 @@ import { BareComponent } from "@latticexyz/solecs/src/BareComponent.sol";
 import { LibTypes } from "@latticexyz/solecs/src/LibTypes.sol";
 
 /**
- * @dev Operator approval entity = hashed(account, operator)
+ * @dev Balance entity = hashed(account, id)
  */
-function getOperatorApprovalEntity(address account, address operator) pure returns (uint256) {
-  return uint256(keccak256(abi.encode(account, operator)));
+function getBalanceEntity(address account, uint256 id) pure returns (uint256) {
+  return uint256(keccak256(abi.encode(account, id)));
 }
 
-contract OperatorApprovalsComponent is BareComponent {
+contract BalanceComponent is BareComponent {
   constructor(address world, uint256 id) BareComponent(world, id) {}
 
   function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
@@ -20,19 +20,19 @@ contract OperatorApprovalsComponent is BareComponent {
     values = new LibTypes.SchemaValue[](1);
 
     keys[0] = "value";
-    values[0] = LibTypes.SchemaValue.BOOL;
+    values[0] = LibTypes.SchemaValue.UINT256;
   }
 
-  function set(uint256 entity) public {
-    set(entity, abi.encode(true));
+  function set(uint256 entity, uint256 value) public {
+    set(entity, abi.encode(value));
   }
 
-  function getValue(uint256 entity) public view returns (bool) {
+  function getValue(uint256 entity) public view returns (uint256) {
     bytes memory rawValue = getRawValue(entity);
     if (rawValue.length > 0) {
-      return abi.decode(rawValue, (bool));
+      return abi.decode(rawValue, (uint256));
     } else {
-      return false;
+      return 0;
     }
   }
 }

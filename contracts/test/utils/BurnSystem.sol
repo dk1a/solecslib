@@ -6,21 +6,15 @@ import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 import { System, ISystem } from "@latticexyz/solecs/src/System.sol";
 import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
 
-import { LibForwarder } from "../../token/ERC1155/LibForwarder.sol";
-import { ERC1155ExecuteType } from "../../token/ERC1155/ERC1155BaseSystem.sol";
+import { ERC1155BaseSystem, ID as ERC1155BaseSystemID } from "./ERC1155BaseSystemMock.sol";
 
-uint256 constant ID = uint256(keccak256("test.system.BurnSystem"));
+uint256 constant ID = uint256(keccak256("test.system.Burn"));
 
 contract BurnSystem is System {
-  uint256 immutable erc1155SystemId;
-
   constructor(
     IWorld _world,
-    address _components,
-    uint256 _erc1155SystemId
-  ) System(_world, _components) {
-    erc1155SystemId = _erc1155SystemId;
-  }
+    address _components
+  ) System(_world, _components) {}
 
   function executeTyped(
     address account,
@@ -32,14 +26,11 @@ contract BurnSystem is System {
 
   function execute(bytes memory arguments) public override returns (bytes memory) {
     ISystem erc1155System = ISystem(
-      getAddressById(world.systems(), erc1155SystemId)
+      getAddressById(world.systems(), ERC1155BaseSystemID)
     );
 
-    // forward the original msg.sender
-    LibForwarder.execute(
-      erc1155System,
-      msg.sender,
-      abi.encode(ERC1155ExecuteType.BURN_BATCH, arguments)
+    erc1155System.execute(
+      abi.encode(ERC1155BaseSystem.executeBurnBatch.selector, arguments)
     );
 
     return '';

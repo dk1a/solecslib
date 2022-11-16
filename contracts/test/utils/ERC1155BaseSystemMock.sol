@@ -7,20 +7,18 @@ import { ERC1155BaseSystem } from '../../token/ERC1155/ERC1155BaseSystem.sol';
 
 uint256 constant ID = uint256(keccak256("mock.system.ERC1155Base"));
 
-uint256 constant balancesComponentId = uint256(keccak256(
-  abi.encode(ID, "mock.component.Balances")
+uint256 constant balanceComponentId = uint256(keccak256(
+  abi.encode(ID, "mock.component.Balance")
 ));
-uint256 constant operatorApprovalsComponentId = uint256(keccak256(
-  abi.encode(ID, "mock.component.OperatorApprovals")
+uint256 constant operatorApprovalComponentId = uint256(keccak256(
+  abi.encode(ID, "mock.component.OperatorApproval")
 ));
 
 contract ERC1155BaseSystemMock is ERC1155BaseSystem {
-  error ERC1155BaseSystemMock__InvalidCaller();
-
   constructor(
     IWorld _world,
     address _components
-  ) ERC1155BaseSystem(_world, _components, balancesComponentId, operatorApprovalsComponentId) {}
+  ) ERC1155BaseSystem(_world, _components, balanceComponentId, operatorApprovalComponentId) {}
 
   // this is for hardhat tests
   function mint(

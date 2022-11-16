@@ -7,17 +7,17 @@ import { Context } from "@openzeppelin/contracts/utils/Context.sol";
 import { IERC1155Receiver } from '@solidstate/contracts/interfaces/IERC1155Receiver.sol';
 import { IERC1155Internal } from "@solidstate/contracts/interfaces/IERC1155Internal.sol";
 
-import { ERC1155BalanceVData } from "./ERC1155BalanceVData.sol";
+import { ERC1155BaseVData } from "./ERC1155BaseVData.sol";
 
 /**
  * @title Storage-agnostic ERC1155 balance internals
  * @dev Derived from https://github.com/solidstate-network/solidstate-solidity/ (MIT)
  * and https://github.com/OpenZeppelin/openzeppelin-contracts/ (MIT)
  */
-abstract contract ERC1155BalanceInternal is
+abstract contract ERC1155BaseInternal is
   Context,
   IERC1155Internal,
-  ERC1155BalanceVData
+  ERC1155BaseVData
 {
   error ERC1155Base__ArrayLengthMismatch();
   error ERC1155Base__BalanceQueryZeroAddress();
@@ -26,12 +26,14 @@ abstract contract ERC1155BalanceInternal is
   error ERC1155Base__ERC1155ReceiverRejected();
   error ERC1155Base__ERC1155ReceiverNotImplemented();
   error ERC1155Base__MintToZeroAddress();
+  error ERC1155Base__NotOwnerOrApproved();
+  error ERC1155Base__SelfApproval();
   error ERC1155Base__TransferExceedsBalance();
   error ERC1155Base__TransferToZeroAddress();
 
   function _balanceOf(address account, uint256 id) internal view virtual returns (uint256) {
     if (account == address(0)) revert ERC1155Base__BalanceQueryZeroAddress();
-    return _get_balances(account, id);
+    return _get_balance(account, id);
   }
 
   function _mint(
@@ -51,10 +53,10 @@ abstract contract ERC1155BalanceInternal is
       data
     );
 
-    _set_balances(
+    _set_balance(
       account,
       id,
-      _get_balances(account, id) + amount
+      _get_balance(account, id) + amount
     );
 
     emit TransferSingle(_msgSender(), address(0), account, id, amount);
@@ -97,10 +99,10 @@ abstract contract ERC1155BalanceInternal is
     );
 
     for (uint256 i; i < ids.length; i++) {
-      _set_balances(
+      _set_balance(
         account,
         ids[i],
-        _get_balances(account, ids[i]) + amounts[i]
+        _get_balance(account, ids[i]) + amounts[i]
       );
     }
 
@@ -141,10 +143,10 @@ abstract contract ERC1155BalanceInternal is
       ''
     );
 
-    uint256 fromBalance = _get_balances(account, id);
+    uint256 fromBalance = _get_balance(account, id);
     if (amount > fromBalance) revert ERC1155Base__BurnExceedsBalance();
     unchecked {
-      _set_balances(
+      _set_balance(
         account,
         id,
         fromBalance - amount
@@ -168,10 +170,10 @@ abstract contract ERC1155BalanceInternal is
       uint256 id = ids[i];
       uint256 amount = amounts[i];
 
-      uint256 fromBalance = _get_balances(account, id);
+      uint256 fromBalance = _get_balance(account, id);
       if (amount > fromBalance) revert ERC1155Base__BurnExceedsBalance();
       unchecked {
-        _set_balances(
+        _set_balance(
           account,
           id,
           fromBalance - amount
@@ -201,19 +203,19 @@ abstract contract ERC1155BalanceInternal is
       data
     );
 
-    uint256 fromBalance = _get_balances(sender, id);
+    uint256 fromBalance = _get_balance(sender, id);
     if (amount > fromBalance) revert ERC1155Base__TransferExceedsBalance();
     unchecked {
-      _set_balances(
+      _set_balance(
         sender,
         id,
         fromBalance - amount
       );
     }
-    _set_balances(
+    _set_balance(
       recipient,
       id,
-      _get_balances(recipient, id) + amount
+      _get_balance(recipient, id) + amount
     );
 
     emit TransferSingle(operator, sender, recipient, id, amount);
@@ -256,19 +258,19 @@ abstract contract ERC1155BalanceInternal is
       uint256 id = ids[i];
       uint256 amount = amounts[i];
 
-      uint256 fromBalance = _get_balances(sender, id);
+      uint256 fromBalance = _get_balance(sender, id);
       if (amount > fromBalance) revert ERC1155Base__TransferExceedsBalance();
       unchecked {
-        _set_balances(
+        _set_balance(
           sender,
           id,
           fromBalance - amount
         );
       }
-      _set_balances(
+      _set_balance(
         recipient,
         id,
-        _get_balances(recipient, id) + amount
+        _get_balance(recipient, id) + amount
       );
     }
 
