@@ -12,6 +12,7 @@ library SystemStorage {
   struct Layout {
     IUint256Component components;
     IWorld world;
+    address owner;
   }
 
   function layout() internal pure returns (Layout storage l) {
