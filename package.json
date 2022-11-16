@@ -2,8 +2,8 @@
   "name": "@dk1a/solecslib",
   "version": "0.1.0",
   "author": "dk1a <dk1a@protonmail.com>",
-  "license": "Unlicense",
-  "description": "ERC1155 and ECS System, with components and msg.sender forwarding",
+  "license": "MIT",
+  "description": "ERC1155 and ERC721 Systems that use components to store data",
   "repository": {
     "type": "git",
     "url": "https://github.com/dk1a/solecslib.git"
