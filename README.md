@@ -10,19 +10,13 @@ See [mud.dev](https://mud.dev/) first for context on solecs and what a System is
 Install dependencies via node
 
 ```bash
-yarn install
-```
-
-Build contracts via forge
-
-```bash
-yarn build
+pnpm install
 ```
 
 Run tests via both forge and hardhat
 
 ```bash
-yarn test
+pnpm test
 ```
 
 [Forge](https://book.getfoundry.sh/forge/writing-tests) is used for tests internally. Except ERC tests are entirely taken from [@solidstate/spec](https://github.com/solidstate-network/solidstate-solidity/tree/master/spec), which is why hardhat is also used.
@@ -45,5 +39,8 @@ Full ERC1155/721 and System implementation, with a default execute and sub-execu
 
 #### Notes on VData and Logic
 Data and Logic separation isn't really necessary, but this was an interesting use case for it. For example by having *Logic + DataStorage + constructor* you could get an ordinary ERC1155/721 implementation (where DataStorage implements VData but just uses normal contract storage). And imo keeping components away from Logic makes it easier to compare to @solidstate/contracts (I tried to keep it very similar, and even reuse tests via @solidstate/spec).
+
+#### Forwarder systems, like OperatorApprovalSystem
+These exist as an optional addition to ERC__BaseSystem. They are pure-ECS wrappers for transfers and approvals. I'm not sure they're useful.
 
 ----------
