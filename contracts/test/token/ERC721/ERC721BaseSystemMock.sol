@@ -3,7 +3,7 @@
 pragma solidity ^0.8.17;
 
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
-import { ERC721BaseSystem } from '../../token/ERC721/ERC721BaseSystem.sol';
+import { ERC721BaseSystem } from '../../../token/ERC721/ERC721BaseSystem.sol';
 
 uint256 constant ID = uint256(keccak256("mock.system.ERC721Base"));
 
