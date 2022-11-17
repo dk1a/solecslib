@@ -2,75 +2,14 @@
 
 pragma solidity ^0.8.17;
 
-import { PRBTest } from "@prb/test/src/PRBTest.sol";
-
-// ECS
-import { World } from "@latticexyz/solecs/src/World.sol";
-// systems
-import { ForwardTransferSystem, ID as ForwardTransferSystemID } from "./ForwardTransferSystem.sol";
-import { ERC721BaseSystemMock, ID as ERC721BaseSystemMockID } from "./ERC721BaseSystemMock.sol";
-
-// ERC721 events
-import { IERC721Internal } from "@solidstate/contracts/interfaces/IERC721Internal.sol";
+import { BaseTest } from "./BaseTest.sol";
 
 // errors
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
 import { OwnableAndWriteAccess } from "../../../mud/OwnableAndWriteAccess.sol";
 import { ERC721BaseSystem } from "../../../token/ERC721/ERC721BaseSystem.sol";
-import { ERC721BaseInternal } from "../../../token/ERC721/logic/ERC721BaseInternal.sol";
 
-contract ERC721BaseSystemTest is
-  PRBTest,
-  IERC721Internal
-{
-  address deployer = address(bytes20(keccak256("deployer")));
-  
-  address alice = address(bytes20(keccak256("alice")));
-  address bob = address(bytes20(keccak256("bob")));
-  address eve = address(bytes20(keccak256("eve")));
-
-  address writer = address(bytes20(keccak256("writer")));
-  address notWriter = address(bytes20(keccak256("notWriter")));
-
-  World world;
-  // ERC721 System
-  ERC721BaseSystemMock ercSystem;
-  // calls executeSafeTransferBatch with msg.sender as opearator
-  ForwardTransferSystem forwardTransferSystem;
-  ForwardTransferSystem unauthForwardTransferSystem;
-
-  uint256 tokenId = 1337;
-
-  function setUp() public virtual {
-    vm.startPrank(deployer);
-
-    // deploy world
-    world = new World();
-    world.init();
-
-    address components = address(world.components());
-    // deploy systems
-    ercSystem = new ERC721BaseSystemMock(world, components);
-    forwardTransferSystem = new ForwardTransferSystem(world, components);
-    unauthForwardTransferSystem = new ForwardTransferSystem(world, components);
-    // register systems
-    world.registerSystem(address(ercSystem), ERC721BaseSystemMockID);
-    world.registerSystem(address(forwardTransferSystem), ForwardTransferSystemID);
-    world.registerSystem(address(unauthForwardTransferSystem), uint256(keccak256('unauthForwardTransferSystem')));
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(address(forwardTransferSystem));
-    ercSystem.authorizeWriter(writer);
-
-    vm.stopPrank();
-  }
-
-  // HELPERS
-
-  function _defaultMintToAlice() internal {
-    vm.prank(writer);
-    _mintExec(alice, tokenId);
-  }
-
+contract ERC721BaseSystemTest is BaseTest {
   // EXECUTE
 
   function testInvalidExecute() public {
@@ -237,39 +176,5 @@ contract ERC721BaseSystemTest is
     vm.prank(deployer);
     _transferExec(alice, alice, bob, tokenId, '');
     assertEq(ercSystem.ownerOf(tokenId), bob);
-  }
-
-  // FORWARD TRANSFER
-
-  function testForwardTransfer() public {
-    _defaultMintToAlice();
-
-    assertEq(ercSystem.ownerOf(tokenId), alice);
-
-    vm.prank(alice);
-    forwardTransferSystem.executeTyped(alice, bob, tokenId, '');
-
-    assertEq(ercSystem.ownerOf(tokenId), bob);
-  }
-
-  function testForwardNotOwnerTransfer() public {
-    _defaultMintToAlice();
-
-    assertEq(ercSystem.ownerOf(tokenId), alice);
-
-    vm.prank(bob);
-    vm.expectRevert(ERC721BaseInternal.ERC721Base__NotOwnerOrApproved.selector);
-    forwardTransferSystem.executeTyped(alice, bob, tokenId, '');
-  }
-
-  function testForwardNotOwnerTransferFromForwarder() public {
-    vm.prank(writer);
-    _mintExec(address(forwardTransferSystem), tokenId);
-
-    assertEq(ercSystem.ownerOf(tokenId), address(forwardTransferSystem));
-
-    vm.prank(bob);
-    vm.expectRevert(ERC721BaseInternal.ERC721Base__NotOwnerOrApproved.selector);
-    forwardTransferSystem.executeTyped(address(forwardTransferSystem), bob, tokenId, '');
   }
 }

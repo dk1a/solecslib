@@ -102,7 +102,7 @@ abstract contract ERC721BaseInternal is
 
     _beforeTokenTransfer(owner, address(0), tokenId);
 
-    _approve(address(0), tokenId);
+    _approveInternal(address(0), tokenId);
 
     _set_tokenOwner(address(0), tokenId);
 
@@ -119,7 +119,7 @@ abstract contract ERC721BaseInternal is
 
     _beforeTokenTransfer(from, to, tokenId);
 
-    _approve(address(0), tokenId);
+    _approveInternal(address(0), tokenId);
 
     _set_tokenOwner(to, tokenId);
 
@@ -144,9 +144,24 @@ abstract contract ERC721BaseInternal is
     );
   }
 
-  function _approve(address operator, uint256 tokenId) internal virtual {
+  function _approve(address account, address operator, uint256 tokenId) internal virtual {
+    address owner = _ownerOf(tokenId);
+    if (operator == owner) revert ERC721Base__SelfApproval();
+    if (account != owner && !_isApprovedForAll(owner, account)) {
+      revert ERC721Base__NotOwnerOrApproved();
+    }
+    _approveInternal(operator, tokenId);
+  }
+
+  function _approveInternal(address operator, uint256 tokenId) internal virtual {
     _set_tokenApproval(tokenId, operator);
     emit Approval(_ownerOf(tokenId), operator, tokenId);
+  }
+
+  function _setApprovalForAll(address account, address operator, bool status) internal virtual {
+    if (operator == account) revert ERC721Base__SelfApproval();
+    _set_operatorApproval(account, operator, status);
+    emit ApprovalForAll(account, operator, status);
   }
 
   function _doSafeTransferAcceptanceCheck(

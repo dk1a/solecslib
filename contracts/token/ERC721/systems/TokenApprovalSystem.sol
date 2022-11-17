@@ -6,41 +6,41 @@ import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 import { System, ISystem } from "@latticexyz/solecs/src/System.sol";
 import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
 
-import { ERC1155BaseSystem } from "../ERC1155BaseSystem.sol";
+import { ERC721BaseSystem } from "../ERC721BaseSystem.sol";
 
 /**
- * @title Optional forwarder system that wraps executeSetApprovalForAll into its execute
+ * @title Optional forwarder system that wraps executeApprove into its execute
  */
-contract SetApprovalForAllSystem is System {
-  uint256 immutable erc1155BaseSystemId;
+contract TokenApprovalSystem is System {
+  uint256 immutable erc721BaseSystemId;
 
   constructor(
     IWorld _world,
     address _components,
-    uint256 _erc1155BaseSystemId
+    uint256 _erc721BaseSystemId
   ) System(_world, _components) {
-    erc1155BaseSystemId = _erc1155BaseSystemId;
+    erc721BaseSystemId = _erc721BaseSystemId;
   }
 
   function executeTyped(
     address operator,
-    bool status
+    uint256 tokenId
   ) public {
-    execute(abi.encode(operator, status));
+    execute(abi.encode(operator, tokenId));
   }
 
   function execute(bytes memory arguments) public override returns (bytes memory) {
     (
       address operator,
-      bool status
-    ) = abi.decode(arguments, (address, bool));
+      uint256 tokenId
+    ) = abi.decode(arguments, (address, uint256));
 
-    ERC1155BaseSystem(
-      getAddressById(world.systems(), erc1155BaseSystemId)
-    ).executeSetApprovalForAll(
+    ERC721BaseSystem(
+      getAddressById(world.systems(), erc721BaseSystemId)
+    ).executeApprove(
       msg.sender,
       operator,
-      status
+      tokenId
     );
 
     return '';

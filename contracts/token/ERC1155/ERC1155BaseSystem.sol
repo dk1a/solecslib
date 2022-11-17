@@ -108,7 +108,7 @@ contract ERC1155BaseSystem is
       ) = abi.decode(innerArgs, (address, address, uint256[], uint256[], bytes));
       executeArbitrarySafeTransferBatch(from, to, ids, amounts, data);
 
-    // approve `operator` to use tokens of `account` 
+    // approve `operator` to use tokens of `account`
     } else if (executeSelector == this.executeSetApprovalForAll.selector) {
       (
         address account,

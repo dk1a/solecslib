@@ -46,21 +46,14 @@ abstract contract ERC721BaseLogic is
    * @inheritdoc IERC721
    */
   function approve(address operator, uint256 tokenId) public payable virtual override {
-    address owner = ownerOf(tokenId);
-    if (operator == owner) revert ERC721Base__SelfApproval();
-    if (_msgSender() != owner && !isApprovedForAll(owner, msg.sender)) {
-      revert ERC721Base__NotOwnerOrApproved();
-    }
-    _approve(operator, tokenId);
+    _approve(_msgSender(), operator, tokenId);
   }
 
   /**
    * @inheritdoc IERC721
    */
   function setApprovalForAll(address operator, bool status) public virtual override {
-    if (operator == _msgSender()) revert ERC721Base__SelfApproval();
-    _set_operatorApproval(_msgSender(), operator, status);
-    emit ApprovalForAll(_msgSender(), operator, status);
+    _setApprovalForAll(_msgSender(), operator, status);
   }
 
   /**

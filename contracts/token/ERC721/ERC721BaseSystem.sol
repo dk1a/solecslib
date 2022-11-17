@@ -104,6 +104,23 @@ contract ERC721BaseSystem is
       ) = abi.decode(innerArgs, (address, address, uint256, bytes));
       executeArbitrarySafeTransfer(from, to, tokenId, data);
 
+    // approve `operator` to use tokens of `account`
+    } else if (executeSelector == this.executeSetApprovalForAll.selector) {
+      (
+        address account,
+        address operator,
+        bool status
+      ) = abi.decode(innerArgs, (address, address, bool));
+      executeSetApprovalForAll(account, operator, status);
+
+    } else if (executeSelector == this.executeApprove.selector) {
+      (
+        address account,
+        address operator,
+        uint256 tokenId
+      ) = abi.decode(innerArgs, (address, address, uint256));
+      executeApprove(account, operator, tokenId);
+
     } else {
       revert ERC721BaseSystem__InvalidExecuteSelector();
     }
@@ -157,5 +174,31 @@ contract ERC721BaseSystem is
     bytes memory data
   ) public virtual onlyWriter {
     _safeTransfer(_msgSender(), from, to, tokenId, data);
+  }
+
+  /**
+   * @notice Approve `operator` to use tokens of `account`
+   *
+   * This can be used to forward approval
+   */
+  function executeSetApprovalForAll(
+    address account,
+    address operator,
+    bool status
+  ) public virtual onlyWriter {
+    _setApprovalForAll(account, operator, status);
+  }
+
+  /**
+   * @notice Approve `operator` to use `tokenId` of `account`
+   *
+   * This can be used to forward approval
+   */
+  function executeApprove(
+    address account,
+    address operator,
+    uint256 tokenId
+  ) public virtual onlyWriter {
+    _approve(account, operator, tokenId);
   }
 }

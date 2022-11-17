@@ -60,6 +60,6 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
 
     vm.prank(bob);
     vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
-    transferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
+    transferSystem.executeTyped(address(transferSystem), bob, _asArray(tokenId), _asArray(80), '');
   }
 }
