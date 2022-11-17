@@ -297,6 +297,16 @@ abstract contract ERC1155BaseInternal is
     );
   }
 
+  function _setApprovalForAll(
+    address account,
+    address operator,
+    bool status
+  ) internal virtual {
+    if (account == operator) revert ERC1155Base__SelfApproval();
+    _set_operatorApproval(account, operator, status);
+    emit ApprovalForAll(account, operator, status);
+  }
+
   function _beforeTokenTransfer(
     address operator,
     address from,

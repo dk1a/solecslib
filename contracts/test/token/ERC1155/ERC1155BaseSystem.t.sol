@@ -2,86 +2,14 @@
 
 pragma solidity ^0.8.17;
 
-import { PRBTest } from "@prb/test/src/PRBTest.sol";
-
-// ECS
-import { World } from "@latticexyz/solecs/src/World.sol";
-// systems
-import { ForwardTransferSystem, ID as ForwardTransferSystemID } from "./ForwardTransferSystem.sol";
-import { ERC1155BaseSystemMock, ID as ERC1155BaseSystemMockID } from "./ERC1155BaseSystemMock.sol";
-
-// ERC1155 events
-import { IERC1155Internal } from "@solidstate/contracts/interfaces/IERC1155Internal.sol";
+import { BaseTest } from "./BaseTest.sol";
 
 // errors
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
 import { OwnableAndWriteAccess } from "../../../mud/OwnableAndWriteAccess.sol";
 import { ERC1155BaseSystem } from "../../../token/ERC1155/ERC1155BaseSystem.sol";
-import { ERC1155BaseInternal } from "../../../token/ERC1155/logic/ERC1155BaseInternal.sol";
 
-contract ERC1155BaseSystemTest is
-  PRBTest,
-  IERC1155Internal
-{
-  address deployer = address(bytes20(keccak256("deployer")));
-  
-  address alice = address(bytes20(keccak256("alice")));
-  address bob = address(bytes20(keccak256("bob")));
-  address eve = address(bytes20(keccak256("eve")));
-
-  address writer = address(bytes20(keccak256("writer")));
-  address notWriter = address(bytes20(keccak256("notWriter")));
-
-  World world;
-  // ERC1155 System
-  ERC1155BaseSystemMock ercSystem;
-  // calls executeSafeTransferBatch with msg.sender as opearator
-  ForwardTransferSystem forwardTransferSystem;
-  ForwardTransferSystem unauthForwardTransferSystem;
-
-  uint256 tokenId = 1337;
-
-  function setUp() public virtual {
-    vm.startPrank(deployer);
-
-    // deploy world
-    world = new World();
-    world.init();
-
-    address components = address(world.components());
-    // deploy systems
-    ercSystem = new ERC1155BaseSystemMock(world, components);
-    forwardTransferSystem = new ForwardTransferSystem(world, components);
-    unauthForwardTransferSystem = new ForwardTransferSystem(world, components);
-    // register systems
-    world.registerSystem(address(ercSystem), ERC1155BaseSystemMockID);
-    world.registerSystem(address(forwardTransferSystem), ForwardTransferSystemID);
-    world.registerSystem(address(unauthForwardTransferSystem), uint256(keccak256('unauthForwardTransferSystem')));
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(address(forwardTransferSystem));
-    ercSystem.authorizeWriter(writer);
-
-    vm.stopPrank();
-  }
-
-  // HELPERS
-
-  function _defaultMintToAlice() internal {
-    vm.prank(writer);
-    _mintExec(alice, tokenId);
-  }
-
-  function _asArray(uint256 number) internal pure returns (uint256[] memory result) {
-    result = new uint256[](1);
-    result[0] = number;
-  }
-
-  // only operator is important for forwarding, ERC1155 events are tested elsewhere
-  function _expectEmitTransferBatch(address operator) internal {
-    vm.expectEmit(true, false, false, false);
-    emit TransferBatch(operator, address(0), address(0), _asArray(0), _asArray(0));
-  }
-
+contract ERC1155BaseSystemTest is BaseTest {
   // EXECUTE
 
   function testInvalidExecute() public {
@@ -254,39 +182,42 @@ contract ERC1155BaseSystemTest is
     assertEq(ercSystem.balanceOf(bob, tokenId), 80);
   }
 
-  // FORWARD TRANSFER
+  // APPROVAL FOR ALL
 
-  function testForwardTransfer() public {
-    _defaultMintToAlice();
-
-    assertEq(ercSystem.balanceOf(alice, tokenId), 100);
-
-    vm.prank(alice);
-    _expectEmitTransferBatch(alice);
-    forwardTransferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
-
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
-    assertEq(ercSystem.balanceOf(bob, tokenId), 80);
-  }
-
-  function testForwardNotOwnerTransfer() public {
-    _defaultMintToAlice();
-
-    assertEq(ercSystem.balanceOf(alice, tokenId), 100);
-
-    vm.prank(bob);
-    vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
-    forwardTransferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
-  }
-
-  function testForwardNotOwnerTransferFromForwarder() public {
+  function testApprovalDirectWriter() public {
     vm.prank(writer);
-    _mintExec(address(forwardTransferSystem), tokenId);
+    ercSystem.executeSetApprovalForAll(alice, bob, true);
+    assertTrue(ercSystem.isApprovedForAll(alice, bob));
+  }
 
-    assertEq(ercSystem.balanceOf(address(forwardTransferSystem), tokenId), 100);
+  function testApprovalDirectNotWriter() public {
+    vm.prank(notWriter);
+    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    ercSystem.executeSetApprovalForAll(alice, bob, true);
+  }
 
-    vm.prank(bob);
-    vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
-    forwardTransferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
+  function _approvalExec(address account, address operator) internal {
+    ercSystem.execute(abi.encode(
+      ercSystem.executeSetApprovalForAll.selector,
+      abi.encode(account, operator, true)
+    ));
+  }
+
+  function testApprovalWriter() public {
+    vm.prank(writer);
+    _approvalExec(alice, bob);
+    assertTrue(ercSystem.isApprovedForAll(alice, bob));
+  }
+
+  function testApprovalNotWriter() public {
+    vm.prank(notWriter);
+    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    _approvalExec(alice, bob);
+  }
+
+  function testApprovalOwner() public {
+    vm.prank(deployer);
+    _approvalExec(alice, bob);
+    assertTrue(ercSystem.isApprovedForAll(alice, bob));
   }
 }

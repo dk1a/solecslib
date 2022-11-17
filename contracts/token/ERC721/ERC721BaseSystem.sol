@@ -20,11 +20,12 @@ import { ERC721BaseDataComponents } from "./data-providers/ERC721BaseDataCompone
 /**
  * @title ERC721 and ECS System that uses components.
  * @dev ALL component changes MUST go through this system.
+ * Call `authorizeWriter` to let another system write to this.
  * 
  * TODO metadata, enumerable?
  * TODO atm not using solecs's System in favour of custom owner+writeAccess
  */
-abstract contract ERC721BaseSystem is
+contract ERC721BaseSystem is
   ERC165,
   ERC721BaseDataComponents,
   ERC721BaseLogic,

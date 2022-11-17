@@ -20,11 +20,12 @@ import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataCompo
 /**
  * @title ERC1155 and ECS System that uses components.
  * @dev ALL component changes MUST go through this system.
+ * Call `authorizeWriter` to let another system write to this.
  * 
  * TODO metadata, enumerable?
  * TODO atm not using solecs's System in favour of custom owner+writeAccess
  */
-abstract contract ERC1155BaseSystem is
+contract ERC1155BaseSystem is
   ERC165,
   ERC1155BaseDataComponents,
   ERC1155BaseLogic,
@@ -107,6 +108,15 @@ abstract contract ERC1155BaseSystem is
       ) = abi.decode(innerArgs, (address, address, uint256[], uint256[], bytes));
       executeArbitrarySafeTransferBatch(from, to, ids, amounts, data);
 
+    // approve `operator` to use tokens of `account` 
+    } else if (executeSelector == this.executeSetApprovalForAll.selector) {
+      (
+        address account,
+        address operator,
+        bool status
+      ) = abi.decode(innerArgs, (address, address, bool));
+      executeSetApprovalForAll(account, operator, status);
+
     } else {
       revert ERC1155BaseSystem__InvalidExecuteSelector();
     }
@@ -167,5 +177,18 @@ abstract contract ERC1155BaseSystem is
     bytes memory data
   ) public virtual onlyWriter {
     _safeTransferBatch(_msgSender(), from, to, ids, amounts, data);
+  }
+
+  /**
+   * @notice Approve `operator` to use tokens of `account`
+   *
+   * This can be used to forward approval
+   */
+  function executeSetApprovalForAll(
+    address account,
+    address operator,
+    bool status
+  ) public virtual onlyWriter {
+    _setApprovalForAll(account, operator, status);
   }
 }

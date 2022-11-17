@@ -57,9 +57,7 @@ abstract contract ERC1155BaseLogic is
    * @inheritdoc IERC1155
    */
   function setApprovalForAll(address operator, bool status) public {
-    if (_msgSender() == operator) revert ERC1155Base__SelfApproval();
-    _set_operatorApproval(_msgSender(), operator, status);
-    emit ApprovalForAll(_msgSender(), operator, status);
+    _setApprovalForAll(_msgSender(), operator, status);
   }
 
   /**
