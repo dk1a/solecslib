@@ -3,8 +3,8 @@ lockfileVersion: 5.4
 specifiers:
   '@commitlint/cli': ^17.2.0
   '@commitlint/config-conventional': ^17.2.0
-  '@latticexyz/solecs': ^1.27.1
-  '@latticexyz/std-contracts': ^1.27.1
+  '@latticexyz/solecs': ^1.28.0
+  '@latticexyz/std-contracts': ^1.28.0
   '@nomicfoundation/hardhat-chai-matchers': ^1.0.4
   '@nomiclabs/hardhat-ethers': ^2.2.1
   '@openzeppelin/contracts': ^4.8.0
@@ -20,8 +20,8 @@ specifiers:
   memmove: github:dk1a/memmove#ffd71cd77b1708574ef46a667b23ca3a5cc9fa27
 
 dependencies:
-  '@latticexyz/solecs': 1.27.1
-  '@latticexyz/std-contracts': 1.27.1
+  '@latticexyz/solecs': 1.28.0
+  '@latticexyz/std-contracts': 1.28.0
   '@openzeppelin/contracts': 4.8.0
   '@solidstate/contracts': 0.0.48
   memmove: github.com/dk1a/memmove/ffd71cd77b1708574ef46a667b23ca3a5cc9fa27
@@ -575,12 +575,12 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@latticexyz/solecs/1.27.1:
-    resolution: {integrity: sha512-/nKnhgUG+oRN7iRlnHZ6lAnRZNHUMiRdYCPdYQlMQHtEGZFtXCQlAfsJcxnqLHlmMcI1xJ+2qzCa3jxUnVddHw==}
+  /@latticexyz/solecs/1.28.0:
+    resolution: {integrity: sha512-M0mcHxJVaBfIyTWWoCKV7meT40d5m7BXsYkTG7rUNQS1WjHk2XlJRrqbDy1WU43mwE5gQqTp9rX6PBD3HgYcSQ==}
     dev: false
 
-  /@latticexyz/std-contracts/1.27.1:
-    resolution: {integrity: sha512-uj4zR5RuWhvviNoyIGjmB9VwY4+r0WH3ry2XnEha1TusDn3eI1Q0reu+HNso2rUbER6nl5FX92YR+caJNneqjQ==}
+  /@latticexyz/std-contracts/1.28.0:
+    resolution: {integrity: sha512-XTB80VKfOAlUCJq3pRcx1fWpvcb3Oz/q9Htcs+jOrskzivoZBhgs4H1OhQ9ivbU5LYRTS2pyq8VGkPgZGz9meA==}
     dev: false
 
   /@metamask/eth-sig-util/4.0.1:

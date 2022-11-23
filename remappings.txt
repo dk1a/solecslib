@@ -1,1 +1,2 @@
 memmove/=node_modules/memmove/src/
+solecs/=node_modules/@latticexyz/solecs/src/

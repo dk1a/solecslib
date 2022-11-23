@@ -44,3 +44,15 @@ Data and Logic separation isn't really necessary, but this was an interesting us
 These exist as an optional addition to ERC__BaseSystem. They are pure-ECS wrappers for transfers and approvals. I'm not sure they're useful.
 
 ----------
+
+## ScopedValue
+
+Interact with batches (identified by scope) of entity values, or individual entity values.
+
+Scope is for doing batched read/increase/decrease without looping through everything.
+
+Value is any kind of entity to counter mapping.
+
+[ScopedValueTest](contracts/scoped-value/test/ScopedValue.t.sol) has an example.
+
+----------

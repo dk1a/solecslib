@@ -21,8 +21,8 @@
     "/contracts/**/*.sol"
   ],
   "dependencies": {
-    "@latticexyz/solecs": "^1.27.1",
-    "@latticexyz/std-contracts": "^1.27.1",
+    "@latticexyz/solecs": "^1.28.0",
+    "@latticexyz/std-contracts": "^1.28.0",
     "@openzeppelin/contracts": "^4.8.0",
     "@solidstate/contracts": "^0.0.48",
     "memmove": "github:dk1a/memmove#ffd71cd77b1708574ef46a667b23ca3a5cc9fa27"
