@@ -24,6 +24,7 @@ import { ERC1155BaseDataComponentsStorage } from "./ERC1155BaseDataComponentsSto
  */
 abstract contract ERC1155BaseDataComponents is ERC1155BaseVData {
   error ERC1155BaseDataComponents__ComponentsNotInitialized();
+  error ERC1155BaseDataComponents__AlreadyInitialized();
 
   /**
    * @dev Initializes components, should be called in constructor/initializer
@@ -33,11 +34,13 @@ abstract contract ERC1155BaseDataComponents is ERC1155BaseVData {
     uint256 balanceComponentId,
     uint256 operatorApprovalComponentId
   ) internal {
-    ERC1155BaseDataComponentsStorage.layout().balanceComponent
-      = new BalanceComponent(address(world), balanceComponentId);
+    ERC1155BaseDataComponentsStorage.Layout storage l = ERC1155BaseDataComponentsStorage.layout();
 
-    ERC1155BaseDataComponentsStorage.layout().operatorApprovalComponent
-      = new OperatorApprovalComponent(address(world), operatorApprovalComponentId);
+    // Prevents accidental change of components
+    if (address(l.balanceComponent) != address(0)) revert ERC1155BaseDataComponents__AlreadyInitialized();
+
+    l.balanceComponent = new BalanceComponent(address(world), balanceComponentId);
+    l.operatorApprovalComponent = new OperatorApprovalComponent(address(world), operatorApprovalComponentId);
   }
 
   /*//////////////////////////////////////////////////////////////

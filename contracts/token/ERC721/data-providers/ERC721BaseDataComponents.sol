@@ -25,6 +25,7 @@ import { ERC721BaseDataComponentsStorage } from "./ERC721BaseDataComponentsStora
  */
 abstract contract ERC721BaseDataComponents is ERC721BaseVData {
   error ERC721BaseDataComponents__ComponentsNotInitialized();
+  error ERC721BaseDataComponents__AlreadyInitialized();
 
   /**
    * @dev Initializes components, should be called in constructor/initializer
@@ -36,6 +37,10 @@ abstract contract ERC721BaseDataComponents is ERC721BaseVData {
     uint256 tokenApprovalComponentId
   ) internal {
     ERC721BaseDataComponentsStorage.Layout storage l = ERC721BaseDataComponentsStorage.layout();
+
+    // Prevents accidental change of components
+    if (address(l.ownershipComponent) != address(0)) revert ERC721BaseDataComponents__AlreadyInitialized();
+
     l.ownershipComponent = new OwnershipComponent(address(world), ownershipComponentId);
     l.operatorApprovalComponent = new OperatorApprovalComponent(address(world), operatorApprovalComponentId);
     l.tokenApprovalComponent = new TokenApprovalComponent(address(world), tokenApprovalComponentId);
