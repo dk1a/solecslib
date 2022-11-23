@@ -5,9 +5,10 @@ pragma solidity ^0.8.17;
 import { PRBTest } from "@prb/test/src/PRBTest.sol";
 
 import { World } from "@latticexyz/solecs/src/World.sol";
-import { ScopeComponent } from "../ScopeComponent.sol";
-import { ValueComponent } from "../ValueComponent.sol";
-import { ScopedValue } from "../ScopedValue.sol";
+
+import { ScopeComponent } from "../../scoped-value/ScopeComponent.sol";
+import { ValueComponent } from "../../scoped-value/ValueComponent.sol";
+import { ScopedValue } from "../../scoped-value/ScopedValue.sol";
 
 uint256 constant TimeScopeComponentID = uint256(keccak256("test.component.TimeScope"));
 uint256 constant TimeValueComponentID = uint256(keccak256("test.component.TimeValue"));

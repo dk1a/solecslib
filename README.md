@@ -53,6 +53,6 @@ Scope is for doing batched read/increase/decrease without looping through everyt
 
 Value is any kind of entity to counter mapping.
 
-[ScopedValueTest](contracts/scoped-value/test/ScopedValue.t.sol) has an example.
+[ScopedValueTest](contracts/test/scoped-value/ScopedValue.t.sol) has an example.
 
 ----------
