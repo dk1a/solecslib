@@ -8,7 +8,7 @@ import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
 import { FromPrototypeComponent } from "./FromPrototypeComponent.sol";
 
 /**
- * @title Model to instantiate prototypes, ensures a reverse mapping.
+ * @title Instantiates prototypes, ensures a reverse mapping.
  * @dev Avoid using FromPrototypeComponent directly
  */
 library FromPrototype {

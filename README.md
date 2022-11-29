@@ -45,7 +45,19 @@ These exist as an optional addition to ERC__BaseSystem. They are pure-ECS wrappe
 
 ----------
 
-## ScopedValue
+## FromPrototype
+
+Instantiates prototypes, ensures a reverse mapping.
+
+`instanceContext` is encoded with `protoEntity` to get instanced entity in `newInstance` and other methods.
+
+[ScopedValueFromPrototype](contracts/scoped-value/ScopedValueFromPrototype.sol) has an example.
+
+----------
+
+## ScopedValue, ScopedValueFromPrototype
+
+FromPrototype-wrapped version is likely more useful.
 
 Interact with batches (identified by scope) of entity values, or individual entity values.
 
@@ -53,6 +65,6 @@ Scope is for doing batched read/increase/decrease without looping through everyt
 
 Value is any kind of entity to counter mapping.
 
-[ScopedValueTest](contracts/test/scoped-value/ScopedValue.t.sol) has an example.
+[ScopedValueFromPrototypeTest](contracts/test/scoped-value/ScopedValueFromPrototype.t.sol) has an example.
 
 ----------
