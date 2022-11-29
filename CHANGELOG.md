@@ -1,3 +1,18 @@
+# [0.3.0](https://github.com/dk1a/solecslib/compare/v0.2.0...v0.3.0) (2022-11-29)
+
+
+### Bug Fixes
+
+* fix getScope ([3d1908c](https://github.com/dk1a/solecslib/commit/3d1908c210dee5e0959eafcefe8b73505ac53096))
+
+
+### Features
+
+* add FromPrototype model and component ([60dd2ae](https://github.com/dk1a/solecslib/commit/60dd2ae17f35ea4ccffd7487397983fd1f3444e4))
+* add ScopedValueFromPrototype and convert tests for it ([157babc](https://github.com/dk1a/solecslib/commit/157babc38045280b24b5b1c16877b0295351523e))
+
+
+
 # [0.2.0](https://github.com/dk1a/solecslib/compare/v0.1.1...v0.2.0) (2022-11-23)
 
 

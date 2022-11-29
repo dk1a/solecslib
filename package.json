@@ -1,6 +1,6 @@
 {
   "name": "@dk1a/solecslib",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "dk1a <dk1a@protonmail.com>",
   "license": "MIT",
   "description": "ERC1155 and ERC721 Systems that use components to store data",
