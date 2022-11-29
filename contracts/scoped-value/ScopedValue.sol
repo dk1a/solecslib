@@ -103,12 +103,13 @@ library ScopedValue {
   }
 
   /**
-   * @notice Get values for an array of `entities`
+   * @notice Get array of `entities` within `scope`, and their `values`
    */
-  function getValuesForEntities(
+  function getEntitiesValues(
     Self memory __self,
-    uint256[] memory entities
-  ) internal view returns (uint256[] memory values) {
+    bytes memory scope
+  ) internal view returns (uint256[] memory entities, uint256[] memory values) {
+    entities = getEntities(__self, scope);
     // get values for entities
     values = new uint256[](entities.length);
     for (uint256 i; i < entities.length; i++) {
@@ -274,7 +275,10 @@ library ScopedValue {
     Self memory __self,
     uint256 entity
   ) internal {
-    // TODO should this revert if absent?
+    // can't remove nonexistent value
+    if (!has(__self, entity)) {
+      revert ScopedValue__EntityAbsent();
+    }
     __self.valueComp.remove(entity);
     __self.scopeComp.remove(entity);
   }
