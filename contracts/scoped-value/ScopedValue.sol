@@ -4,6 +4,7 @@ pragma solidity ^0.8.17;
 
 import { IUint256Component } from "@latticexyz/solecs/src/interfaces/IUint256Component.sol";
 import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
+
 import { ScopeComponent } from "./ScopeComponent.sol";
 import { ValueComponent } from "./ValueComponent.sol";
 
@@ -40,14 +41,19 @@ library ScopedValue {
     ValueComponent valueComp;
   }
 
+  /**
+   * @param components world.components()
+   * @param scopeComponentId ID of ScopeComponent implementation
+   * @param valueComponentId ID of ValueComponent implementation
+   */
   function __construct(
-    IUint256Component registry,
+    IUint256Component components,
     uint256 scopeComponentId,
     uint256 valueComponentId
   ) internal view returns (Self memory) {
     return Self({
-      scopeComp: ScopeComponent(getAddressById(registry, scopeComponentId)),
-      valueComp: ValueComponent(getAddressById(registry, valueComponentId))
+      scopeComp: ScopeComponent(getAddressById(components, scopeComponentId)),
+      valueComp: ValueComponent(getAddressById(components, valueComponentId))
     });
   }
 
@@ -82,8 +88,8 @@ library ScopedValue {
   function getScope(
     Self memory __self,
     uint256 entity
-  ) internal view returns (uint256) {
-    return __self.valueComp.getValue(entity);
+  ) internal view returns (bytes memory) {
+    return __self.scopeComp.getRawValue(entity);
   }
 
   /**
