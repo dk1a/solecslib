@@ -8,10 +8,15 @@ import { World } from "@latticexyz/solecs/src/World.sol";
 
 import { ScopeComponent } from "../../scoped-value/ScopeComponent.sol";
 import { ValueComponent } from "../../scoped-value/ValueComponent.sol";
+import { FromPrototypeComponent } from "../../prototype/FromPrototypeComponent.sol";
+
+import { ScopedValueFromPrototype } from "../../scoped-value/ScopedValueFromPrototype.sol";
 import { ScopedValue } from "../../scoped-value/ScopedValue.sol";
+import { FromPrototype } from "../../prototype/FromPrototype.sol";
 
 uint256 constant TimeScopeComponentID = uint256(keccak256("test.component.TimeScope"));
 uint256 constant TimeValueComponentID = uint256(keccak256("test.component.TimeValue"));
+uint256 constant FromPrototypeComponentID = uint256(keccak256("test.component.FromPrototype"));
 
 struct TimeScope {
   bytes4 timeType;
@@ -21,42 +26,46 @@ struct TimeScope {
 // can't expectRevert internal calls, so this is an external wrapper
 contract ScopedValueRevertHelper {
   function decreaseEntity(
-    ScopedValue.Self memory _sv,
+    ScopedValueFromPrototype.Self memory _sv,
     bytes memory scope,
-    uint256 entity,
+    uint256 protoEntity,
     uint256 value
   ) public {
-    ScopedValue.decreaseEntity(_sv, scope, entity, value);
+    ScopedValueFromPrototype.decreaseEntity(_sv, scope, protoEntity, value);
   }
 }
 
-contract ScopedValueTest is PRBTest {
-  using ScopedValue for ScopedValue.Self;
+contract ScopedValueFromPrototypeTest is PRBTest {
+  using ScopedValueFromPrototype for ScopedValueFromPrototype.Self;
 
   World world;
 
   ScopeComponent scopeComponent;
   ValueComponent valueComponent;
+  FromPrototypeComponent fromPrototypeComponent;
 
-  ScopedValue.Self _sv;
+  ScopedValueFromPrototype.Self _sv;
+  ScopedValueRevertHelper _svRevertHelper;
 
-  uint256 mainEntity = uint256(keccak256('mainEntity'));
+  uint256 targetEntity = uint256(keccak256('targetEntity'));
 
-  // duration entities
-  uint256 de1 = uint256(keccak256(abi.encode(mainEntity, 'duration1')));
-  uint256 de2 = uint256(keccak256(abi.encode(mainEntity, 'duration2')));
-  uint256 de3 = uint256(keccak256(abi.encode(mainEntity, 'duration3')));
+  bytes instanceContext = abi.encode("Time", targetEntity);
+
+  // duration prototype entities
+  uint256 de1 = uint256(keccak256('duration1'));
+  uint256 de2 = uint256(keccak256('duration2'));
+  uint256 de3 = uint256(keccak256('duration3'));
 
   bytes roundScope = abi.encode(
     TimeScope({
       timeType: bytes4(keccak256("round")),
-      entity: mainEntity
+      entity: targetEntity
     })
   );
   bytes turnScope = abi.encode(
     TimeScope({
       timeType: bytes4(keccak256("turn")),
-      entity: mainEntity
+      entity: targetEntity
     })
   );
 
@@ -68,12 +77,26 @@ contract ScopedValueTest is PRBTest {
     // deploy components
     scopeComponent = new ScopeComponent(address(world), TimeScopeComponentID);
     valueComponent = new ValueComponent(address(world), TimeValueComponentID);
+    fromPrototypeComponent = new FromPrototypeComponent(address(world), FromPrototypeComponentID);
+
+    // deploy and authorize helper
+    _svRevertHelper = new ScopedValueRevertHelper();
+    scopeComponent.authorizeWriter(address(_svRevertHelper));
+    valueComponent.authorizeWriter(address(_svRevertHelper));
+    fromPrototypeComponent.authorizeWriter(address(_svRevertHelper));
 
     // init library's object
-    _sv = ScopedValue.__construct(
-      world.components(),
-      TimeScopeComponentID,
-      TimeValueComponentID
+    _sv = ScopedValueFromPrototype.__construct(
+      ScopedValue.__construct(
+        world.components(),
+        TimeScopeComponentID,
+        TimeValueComponentID
+      ),
+      FromPrototype.__construct(
+        world.components(),
+        FromPrototypeComponentID,
+        instanceContext
+      )
     );
   }
 
@@ -94,8 +117,6 @@ contract ScopedValueTest is PRBTest {
   }
 
   function testSingleEntityCannotDecreaseAbsent() public {
-    ScopedValueRevertHelper _svRevertHelper = new ScopedValueRevertHelper();
-
     vm.expectRevert(ScopedValue.ScopedValue__EntityAbsent.selector);
     _svRevertHelper.decreaseEntity(_sv, roundScope, de1, 1);
   }
@@ -113,13 +134,14 @@ contract ScopedValueTest is PRBTest {
   function testTwoEntitiesParallelChanges() public {
     // de1 + 500
     _sv.increaseEntity(roundScope, de1, 500);
+    // de2 + 100
+    _sv.increaseEntity(turnScope, de2, 100);
     // de1 - 200
     _sv.decreaseEntity(roundScope, de1, 200);
-
     // de2 + 50
-    _sv.increaseEntity(turnScope, de2, 50);
+    _sv.decreaseEntity(turnScope, de2, 50);
+
     assertEq(_sv.getValue(de2), 50);
-    // and make sure de1 is unaffected
     assertEq(_sv.getValue(de1), 300);
   }
 
