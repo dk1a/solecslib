@@ -3,7 +3,7 @@
   "version": "0.3.2",
   "author": "dk1a <dk1a@protonmail.com>",
   "license": "MIT",
-  "description": "ERC1155 and ERC721 Systems that use components to store data",
+  "description": "ERC1155 and ERC721 Subsystems that use components to store data",
   "repository": {
     "type": "git",
     "url": "https://github.com/dk1a/solecslib.git"
@@ -21,8 +21,8 @@
     "/contracts/**/*.sol"
   ],
   "dependencies": {
-    "@latticexyz/solecs": "^1.28.0",
-    "@latticexyz/std-contracts": "^1.28.0",
+    "@latticexyz/solecs": "https://gitpkg.now.sh/dk1a/mud/packages/solecs?7cfb9d454b1b612daa9dc1ad49262a0cfbc6770a",
+    "@latticexyz/std-contracts": "https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?7cfb9d454b1b612daa9dc1ad49262a0cfbc6770a",
     "@openzeppelin/contracts": "^4.8.0",
     "@solidstate/contracts": "^0.0.48",
     "memmove": "github:dk1a/memmove#ffd71cd77b1708574ef46a667b23ca3a5cc9fa27"

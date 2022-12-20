@@ -5,7 +5,7 @@ pragma solidity ^0.8.17;
 import { BaseTest } from "./BaseTest.sol";
 
 // systems
-import { ID as ERC721BaseSystemID } from "./ERC721BaseSystemMock.sol";
+import { ID as ERC721BaseSubsystemID } from "./ERC721BaseSubsystemMock.sol";
 import { OperatorApprovalSystem } from "../../../token/ERC721/systems/OperatorApprovalSystem.sol";
 
 contract OperatorApprovalSystemTest is BaseTest {
@@ -18,11 +18,11 @@ contract OperatorApprovalSystemTest is BaseTest {
 
     address components = address(world.components());
     // deploy systems
-    oaSystem = new OperatorApprovalSystem(world, components, ERC721BaseSystemID);
+    oaSystem = new OperatorApprovalSystem(world, components, ERC721BaseSubsystemID);
     // register systems
     world.registerSystem(address(oaSystem), uint256(keccak256("oaSystem")));
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(address(oaSystem));
+    // allows calling ercSubsystem's execute
+    ercSubsystem.authorizeWriter(address(oaSystem));
 
     vm.stopPrank();
   }
@@ -38,7 +38,7 @@ contract OperatorApprovalSystemTest is BaseTest {
     _expectEmitApprovalForAll(alice);
     oaSystem.executeTyped(bob, true);
 
-    assertTrue(ercSystem.isApprovedForAll(alice, bob));
+    assertTrue(ercSubsystem.isApprovedForAll(alice, bob));
   }
 
   function testExecuteOnSystem() public {
@@ -46,6 +46,6 @@ contract OperatorApprovalSystemTest is BaseTest {
     _expectEmitApprovalForAll(alice);
     oaSystem.executeTyped(address(oaSystem), true);
 
-    assertTrue(ercSystem.isApprovedForAll(alice, address(oaSystem)));
+    assertTrue(ercSubsystem.isApprovedForAll(alice, address(oaSystem)));
   }
 }

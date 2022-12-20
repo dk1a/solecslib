@@ -6,20 +6,20 @@ import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 import { System, ISystem } from "@latticexyz/solecs/src/System.sol";
 import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
 
-import { ERC1155BaseSystem } from "../ERC1155BaseSystem.sol";
+import { ERC1155BaseSubsystem } from "../ERC1155BaseSubsystem.sol";
 
 /**
  * @title Optional forwarder system that wraps executeSafeTransferBatch into its execute
  */
 contract SafeBatchTransferFromSystem is System {
-  uint256 immutable erc1155BaseSystemId;
+  uint256 immutable erc1155BaseSubsystemId;
 
   constructor(
     IWorld _world,
     address _components,
-    uint256 _erc1155BaseSystemId
+    uint256 _erc1155BaseSubsystemId
   ) System(_world, _components) {
-    erc1155BaseSystemId = _erc1155BaseSystemId;
+    erc1155BaseSubsystemId = _erc1155BaseSubsystemId;
   }
 
   function executeTyped(
@@ -41,8 +41,8 @@ contract SafeBatchTransferFromSystem is System {
       bytes memory data
     ) = abi.decode(arguments, (address, address, uint256[], uint256[], bytes));
 
-    ERC1155BaseSystem(
-      getAddressById(world.systems(), erc1155BaseSystemId)
+    ERC1155BaseSubsystem(
+      getAddressById(world.systems(), erc1155BaseSubsystemId)
     ).executeSafeTransferBatch(
       msg.sender,
       from,

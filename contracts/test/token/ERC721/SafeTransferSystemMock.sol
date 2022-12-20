@@ -5,7 +5,7 @@ pragma solidity ^0.8.17;
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 
 import { SafeTransferSystem } from "../../../token/ERC721/systems/SafeTransferSystem.sol";
-import { ID as ERC721BaseSystemID } from "./ERC721BaseSystemMock.sol";
+import { ID as ERC721BaseSubsystemID } from "./ERC721BaseSubsystemMock.sol";
 
 uint256 constant ID = uint256(keccak256("test.system.SafeTransfer"));
 
@@ -13,7 +13,7 @@ contract SafeTransferSystemMock is SafeTransferSystem {
   constructor(
     IWorld _world,
     address _components
-  ) SafeTransferSystem(_world, _components, ERC721BaseSystemID) {}
+  ) SafeTransferSystem(_world, _components, ERC721BaseSubsystemID) {}
 
   // to test transfer from self
   function onERC721Received(

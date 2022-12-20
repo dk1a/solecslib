@@ -10,7 +10,7 @@ import { SafeTransferSystemMock, ID as SafeTransferSystemMockID } from "./SafeTr
 // errors
 import { ERC721BaseInternal } from "../../../token/ERC721/logic/ERC721BaseInternal.sol";
 
-contract ERC721BaseSystemTest is BaseTest {
+contract SafeTransferSystemTest is BaseTest {
   SafeTransferSystemMock transferSystem;
 
   function setUp() public virtual override {
@@ -23,8 +23,8 @@ contract ERC721BaseSystemTest is BaseTest {
     transferSystem = new SafeTransferSystemMock(world, components);
     // register systems
     world.registerSystem(address(transferSystem), SafeTransferSystemMockID);
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(address(transferSystem));
+    // allows calling ercSubsystem's execute
+    ercSubsystem.authorizeWriter(address(transferSystem));
 
     vm.stopPrank();
   }
@@ -37,7 +37,7 @@ contract ERC721BaseSystemTest is BaseTest {
     vm.prank(alice);
     transferSystem.executeTyped(alice, bob, tokenId, '');
 
-    assertEq(ercSystem.ownerOf(tokenId), bob);
+    assertEq(ercSubsystem.ownerOf(tokenId), bob);
   }
 
   function testExecuteNotOwner() public {
@@ -50,7 +50,7 @@ contract ERC721BaseSystemTest is BaseTest {
 
   function testExecuteNotOwnerFromForwarder() public {
     vm.prank(writer);
-    ercSystem.executeSafeMint(address(transferSystem), tokenId, '');
+    ercSubsystem.executeSafeMint(address(transferSystem), tokenId, '');
 
     vm.prank(bob);
     vm.expectRevert(ERC721BaseInternal.ERC721Base__NotOwnerOrApproved.selector);

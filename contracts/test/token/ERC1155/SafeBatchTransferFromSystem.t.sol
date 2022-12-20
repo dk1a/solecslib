@@ -21,10 +21,9 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
     address components = address(world.components());
     // deploy systems
     transferSystem = new SafeBatchTransferFromSystemMock(world, components);
-    // register systems
     world.registerSystem(address(transferSystem), SafeBatchTransferFromSystemMockID);
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(address(transferSystem));
+    // authorize
+    ercSubsystem.authorizeWriter(address(transferSystem));
 
     vm.stopPrank();
   }
@@ -42,8 +41,8 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
     _expectEmitTransferBatch(alice);
     transferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
 
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
-    assertEq(ercSystem.balanceOf(bob, tokenId), 80);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
+    assertEq(ercSubsystem.balanceOf(bob, tokenId), 80);
   }
 
   function testExecuteNotOwner() public {
@@ -56,7 +55,7 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
 
   function testExecuteNotOwnerFromForwarder() public {
     vm.prank(writer);
-    ercSystem.executeSafeMintBatch(address(transferSystem), _asArray(tokenId), _asArray(100), '');
+    ercSubsystem.executeSafeMintBatch(address(transferSystem), _asArray(tokenId), _asArray(100), '');
 
     vm.prank(bob);
     vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);

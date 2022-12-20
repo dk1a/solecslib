@@ -10,30 +10,39 @@ import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 // ECS
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
-//import { System } from "@latticexyz/solecs/src/System.sol";
-import { SystemFacet } from "../../mud/SystemFacet.sol";
+import { Subsystem } from "@latticexyz/solecs/src/Subsystem.sol";
 
 // ERC1155 logic and data provider
 import { ERC1155BaseLogic } from "./logic/ERC1155BaseLogic.sol";
 import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataComponents.sol";
 
 /**
- * @title ERC1155 and ECS System that uses components.
+ * @title ERC1155 and ECS Subsystem that uses components.
  * @dev ALL component changes MUST go through this system.
- * Call `authorizeWriter` to let another system write to this.
+ *
+ * `deploy.json` example:
+ * ```
+ * {
+ *   "components": ["ExampleComponent"],
+ *   "systems": [
+ *     { "name": "ERC1155BaseSubsystem", "writeAccess": [] }
+ *     { "name": "ExampleSystem", "writeAccess": ["ERC1155BaseSubsystem"] },
+ *   ]
+ * }
+ * ```
+ * (ERC1155BaseSubsystem deploys its components itself, you only need to deploy the subsystem)
  * 
  * TODO metadata, enumerable?
- * TODO atm not using solecs's System in favour of custom owner+writeAccess
  */
-contract ERC1155BaseSystem is
+contract ERC1155BaseSubsystem is
   ERC165,
   ERC1155BaseDataComponents,
   ERC1155BaseLogic,
-  SystemFacet
+  Subsystem
 {
   using ERC165Storage for ERC165Storage.Layout;
 
-  error ERC1155BaseSystem__InvalidExecuteSelector();
+  error ERC1155BaseSubsystem__InvalidExecuteSelector();
 
   // TODO diamond-compatible version?
   constructor(
@@ -41,10 +50,7 @@ contract ERC1155BaseSystem is
     address _components,
     uint256 balanceComponentId,
     uint256 operatorApprovalComponentId
-  ) {
-    // initialize base system
-    __SystemFacet_init(_world, _components);
-
+  ) Subsystem(_world, _components) {
     // create components
     // (they're tightly coupled to this system, so making them separately isn't useful)
     __ERC1155BaseDataComponents_init(_world, balanceComponentId, operatorApprovalComponentId);
@@ -62,7 +68,7 @@ contract ERC1155BaseSystem is
   /**
    * @notice Internally calls the specified execute method, if it's available
    */
-  function execute(bytes memory args) public virtual returns (bytes memory) {
+  function _execute(bytes memory args) internal virtual override returns (bytes memory) {
     (bytes4 executeSelector, bytes memory innerArgs)
       = abi.decode(args, (bytes4, bytes));
 
@@ -118,7 +124,7 @@ contract ERC1155BaseSystem is
       executeSetApprovalForAll(account, operator, status);
 
     } else {
-      revert ERC1155BaseSystem__InvalidExecuteSelector();
+      revert ERC1155BaseSubsystem__InvalidExecuteSelector();
     }
 
     return '';

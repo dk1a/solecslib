@@ -1,7 +1,7 @@
 const ethers = require('hardhat').ethers
 const describeBehaviorOfERC1155Base = require("@solidstate/spec").describeBehaviorOfERC1155Base
 
-describe('ERC1155BaseSystem', function () {
+describe('ERC1155BaseSubsystem', function () {
   let instance
 
   beforeEach(async function () {
@@ -10,7 +10,7 @@ describe('ERC1155BaseSystem', function () {
     await worldInstance.deployed()
     await worldInstance.init()
 
-    const factory = await ethers.getContractFactory('ERC1155BaseSystemMock')
+    const factory = await ethers.getContractFactory('ERC1155BaseSubsystemMock')
     instance = await factory.deploy(worldInstance.address, await worldInstance.components())
     await instance.deployed()
   });

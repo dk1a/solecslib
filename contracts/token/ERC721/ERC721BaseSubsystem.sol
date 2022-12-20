@@ -10,42 +10,47 @@ import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 // ECS
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
-//import { System } from "@latticexyz/solecs/src/System.sol";
-import { SystemFacet } from "../../mud/SystemFacet.sol";
+import { Subsystem } from "@latticexyz/solecs/src/Subsystem.sol";
 
 // ERC721 logic and data provider
 import { ERC721BaseLogic } from "./logic/ERC721BaseLogic.sol";
 import { ERC721BaseDataComponents } from "./data-providers/ERC721BaseDataComponents.sol";
 
 /**
- * @title ERC721 and ECS System that uses components.
+ * @title ERC721 and ECS Subsystem that uses components.
  * @dev ALL component changes MUST go through this system.
- * Call `authorizeWriter` to let another system write to this.
- * 
+ *
+ * `deploy.json` example:
+ * ```
+ * {
+ *   "components": ["ExampleComponent"],
+ *   "systems": [
+ *     { "name": "ERC721BaseSubsystem", "writeAccess": [] }
+ *     { "name": "ExampleSystem", "writeAccess": ["ERC721BaseSubsystem"] },
+ *   ]
+ * }
+ * ```
+ * (ERC721BaseSubsystem deploys its components itself, you only need to deploy the subsystem)
+ *
  * TODO metadata, enumerable?
- * TODO atm not using solecs's System in favour of custom owner+writeAccess
  */
-contract ERC721BaseSystem is
+contract ERC721BaseSubsystem is
   ERC165,
   ERC721BaseDataComponents,
   ERC721BaseLogic,
-  SystemFacet
+  Subsystem
 {
   using ERC165Storage for ERC165Storage.Layout;
 
-  error ERC721BaseSystem__InvalidExecuteSelector();
+  error ERC721BaseSubsystem__InvalidExecuteSelector();
 
-  // TODO diamond-compatible version?
   constructor(
     IWorld _world,
     address _components,
     uint256 ownershipComponentId,
     uint256 operatorApprovalComponentId,
     uint256 tokenApprovalComponentId
-  ) {
-    // initialize base system
-    __SystemFacet_init(_world, _components);
-
+  ) Subsystem(_world, _components) {
     // create components
     // (they're tightly coupled to this system, so making them separately isn't useful)
     __ERC721BaseDataComponents_init(_world, ownershipComponentId, operatorApprovalComponentId, tokenApprovalComponentId);
@@ -63,7 +68,7 @@ contract ERC721BaseSystem is
   /**
    * @notice Internally calls the specified execute method, if it's available
    */
-  function execute(bytes memory args) public virtual returns (bytes memory) {
+  function _execute(bytes memory args) internal virtual override returns (bytes memory) {
     (bytes4 executeSelector, bytes memory innerArgs)
       = abi.decode(args, (bytes4, bytes));
 
@@ -122,7 +127,7 @@ contract ERC721BaseSystem is
       executeApprove(account, operator, tokenId);
 
     } else {
-      revert ERC721BaseSystem__InvalidExecuteSelector();
+      revert ERC721BaseSubsystem__InvalidExecuteSelector();
     }
 
     return '';

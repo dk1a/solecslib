@@ -7,7 +7,7 @@ import { PRBTest } from "@prb/test/src/PRBTest.sol";
 // ECS
 import { World } from "@latticexyz/solecs/src/World.sol";
 // systems
-import { ERC1155BaseSystemMock, ID as ERC1155BaseSystemMockID } from "./ERC1155BaseSystemMock.sol";
+import { ERC1155BaseSubsystemMock, ID as ERC1155BaseSubsystemMockID } from "./ERC1155BaseSubsystemMock.sol";
 
 // ERC1155 events
 import { IERC1155Internal } from "@solidstate/contracts/interfaces/IERC1155Internal.sol";
@@ -26,8 +26,8 @@ contract BaseTest is
   address notWriter = address(bytes20(keccak256("notWriter")));
 
   World world;
-  // ERC1155 System
-  ERC1155BaseSystemMock ercSystem;
+  // ERC1155 Subsystem
+  ERC1155BaseSubsystemMock ercSubsystem;
 
   uint256 tokenId = 1337;
 
@@ -40,11 +40,10 @@ contract BaseTest is
 
     address components = address(world.components());
     // deploy systems
-    ercSystem = new ERC1155BaseSystemMock(world, components);
-    // register systems
-    world.registerSystem(address(ercSystem), ERC1155BaseSystemMockID);
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(writer);
+    ercSubsystem = new ERC1155BaseSubsystemMock(world, components);
+    world.registerSystem(address(ercSubsystem), ERC1155BaseSubsystemMockID);
+    // authorize
+    ercSubsystem.authorizeWriter(writer);
 
     vm.stopPrank();
   }
@@ -53,7 +52,7 @@ contract BaseTest is
 
   function _defaultMintToAlice() internal {
     vm.prank(writer);
-    ercSystem.executeSafeMintBatch(alice, _asArray(tokenId), _asArray(100), '');
+    ercSubsystem.executeSafeMintBatch(alice, _asArray(tokenId), _asArray(100), '');
   }
 
   function _asArray(uint256 number) internal pure returns (uint256[] memory result) {
