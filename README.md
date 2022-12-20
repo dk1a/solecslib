@@ -10,13 +10,13 @@ See [mud.dev](https://mud.dev/) first for context on solecs and what a System is
 Install dependencies via node
 
 ```bash
-pnpm install
+yarn install
 ```
 
 Run tests via both forge and hardhat
 
 ```bash
-pnpm test
+yarn test
 ```
 
 [Forge](https://book.getfoundry.sh/forge/writing-tests) is used for tests internally. Except ERC tests are entirely taken from [@solidstate/spec](https://github.com/solidstate-network/solidstate-solidity/tree/master/spec), which is why hardhat is also used.

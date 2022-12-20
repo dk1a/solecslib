@@ -15,16 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 7.16.1
-
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18.12.1
-          cache: pnpm
+          cache: yarn
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
@@ -32,10 +27,10 @@ jobs:
           version: nightly
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Run tests
-        run: pnpm test
+        run: yarn test
 
       - name: Build the contracts
         run: forge build --sizes
