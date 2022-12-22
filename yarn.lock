@@ -559,18 +559,13 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@latticexyz/solecs@https://gitpkg.now.sh/dk1a/mud/packages/solecs?7cfb9d454b1b612daa9dc1ad49262a0cfbc6770a":
+"@latticexyz/solecs@https://gitpkg.now.sh/dk1a/mud/packages/solecs?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91":
   version "1.31.3"
-  resolved "https://gitpkg.now.sh/dk1a/mud/packages/solecs?7cfb9d454b1b612daa9dc1ad49262a0cfbc6770a#27ba271a938cb4e5d1630ae9376c763c13035be3"
+  resolved "https://gitpkg.now.sh/dk1a/mud/packages/solecs?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91#c74530ae0e82e3863da811f3131fe980a655fbdc"
 
-"@latticexyz/std-contracts@^1.28.0":
+"@latticexyz/std-contracts@https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91":
   version "1.31.3"
-  resolved "https://registry.yarnpkg.com/@latticexyz/std-contracts/-/std-contracts-1.31.3.tgz#9feac98bf4c86ccd01cfb4401435d2c0fd9706d9"
-  integrity sha512-bHIqFpVg6BdIcQ2bVC6MRdByVMdBTU2NpvtqWl3X9RDk7Yd1pfLzRsrRS2XTuSCuwb4enFQU+usQK1MP0WNPmQ==
-
-"@latticexyz/std-contracts@https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?7cfb9d454b1b612daa9dc1ad49262a0cfbc6770a":
-  version "1.31.3"
-  resolved "https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?7cfb9d454b1b612daa9dc1ad49262a0cfbc6770a#51d7c92346eff54d04a15ba926cea27b0c7b5da0"
+  resolved "https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91#2c9b6ea2046f826055e5d73ddf5515bcf7bf6978"
 
 "@metamask/eth-sig-util@^4.0.0":
   version "4.0.1"
