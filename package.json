@@ -21,8 +21,8 @@
     "/contracts/**/*.sol"
   ],
   "dependencies": {
-    "@latticexyz/solecs": "https://gitpkg.now.sh/dk1a/mud/packages/solecs?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91",
-    "@latticexyz/std-contracts": "https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91",
+    "@latticexyz/solecs": "https://gitpkg.now.sh/dk1a/mud/packages/solecs?982747e9d05ebaa05a084d4c2aacfd53aa7b4397",
+    "@latticexyz/std-contracts": "https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?982747e9d05ebaa05a084d4c2aacfd53aa7b4397",
     "@openzeppelin/contracts": "^4.8.0",
     "@solidstate/contracts": "^0.0.48",
     "memmove": "github:dk1a/memmove#ffd71cd77b1708574ef46a667b23ca3a5cc9fa27"
