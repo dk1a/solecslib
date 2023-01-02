@@ -559,13 +559,13 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@latticexyz/solecs@https://gitpkg.now.sh/dk1a/mud/packages/solecs?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91":
+"@latticexyz/solecs@https://gitpkg.now.sh/dk1a/mud/packages/solecs?002124ef0939eb811ca33ff6e94b3ff03cd7b961":
   version "1.31.3"
-  resolved "https://gitpkg.now.sh/dk1a/mud/packages/solecs?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91#c74530ae0e82e3863da811f3131fe980a655fbdc"
+  resolved "https://gitpkg.now.sh/dk1a/mud/packages/solecs?002124ef0939eb811ca33ff6e94b3ff03cd7b961#736330664d4918f946a26da12b110e14548fa6f0"
 
-"@latticexyz/std-contracts@https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91":
+"@latticexyz/std-contracts@https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?002124ef0939eb811ca33ff6e94b3ff03cd7b961":
   version "1.31.3"
-  resolved "https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?2b00cbb7cd8dfb58b47c79f70fd0932034fe7d91#2c9b6ea2046f826055e5d73ddf5515bcf7bf6978"
+  resolved "https://gitpkg.now.sh/dk1a/mud/packages/std-contracts?002124ef0939eb811ca33ff6e94b3ff03cd7b961#b4362390be5559cf8c4cfc9b40806a38e5861d3b"
 
 "@metamask/eth-sig-util@^4.0.0":
   version "4.0.1"
