@@ -19,20 +19,8 @@ import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataCompo
 /**
  * @title ERC1155 and ECS Subsystem that uses components.
  * @dev ALL component changes MUST go through this system.
- *
- * `deploy.json` example:
- * ```
- * {
- *   "components": ["ExampleComponent"],
- *   "systems": [
- *     { "name": "ERC1155BaseSubsystem", "writeAccess": [] }
- *     { "name": "ExampleSystem", "writeAccess": ["ERC1155BaseSubsystem"] },
- *   ]
- * }
- * ```
- * (ERC1155BaseSubsystem deploys its components itself, you only need to deploy the subsystem)
- * 
- * TODO metadata, enumerable?
+ * Call `authorizeWriter` to allow another System to call the Subsystem.
+ * ERC1155BaseSubsystem deploys its components itself, you only need to deploy the subsystem.
  */
 contract ERC1155BaseSubsystem is
   ERC165Base,
@@ -42,7 +30,6 @@ contract ERC1155BaseSubsystem is
 {
   error ERC1155BaseSubsystem__InvalidExecuteSelector();
 
-  // TODO diamond-compatible version?
   constructor(
     IWorld _world,
     address _components,

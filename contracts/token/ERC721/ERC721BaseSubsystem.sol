@@ -19,20 +19,8 @@ import { ERC721BaseDataComponents } from "./data-providers/ERC721BaseDataCompone
 /**
  * @title ERC721 and ECS Subsystem that uses components.
  * @dev ALL component changes MUST go through this system.
- *
- * `deploy.json` example:
- * ```
- * {
- *   "components": ["ExampleComponent"],
- *   "systems": [
- *     { "name": "ERC721BaseSubsystem", "writeAccess": [] }
- *     { "name": "ExampleSystem", "writeAccess": ["ERC721BaseSubsystem"] },
- *   ]
- * }
- * ```
- * (ERC721BaseSubsystem deploys its components itself, you only need to deploy the subsystem)
- *
- * TODO metadata, enumerable?
+ * Call `authorizeWriter` to allow another System to call the Subsystem.
+ * ERC721BaseSubsystem deploys its components itself, you only need to deploy the subsystem.
  */
 contract ERC721BaseSubsystem is
   ERC165Base,

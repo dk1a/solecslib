@@ -3,7 +3,10 @@ ERC1155 and ERC721 Subsystems that use components to store data
 
 Experimental additions to [@latticexyz/solecs](https://github.com/latticexyz/mud/tree/main/packages/solecs)
 
-See [mud.dev](https://mud.dev/) first for context on solecs and what a System/Subsystem is.
+See [mud.dev](https://mud.dev/) first for context on solecs and what a System is.
+
+A Subsystem is a System that inherits OwnableWritable instead of Ownable.
+Call `Subsystem.authorizeWriter(systemAddress)` to allow a System to execute a Subsystem.
 
 ### Development
 
