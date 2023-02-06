@@ -6,16 +6,16 @@ import { BaseTest } from "./BaseTest.sol";
 
 // errors
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
-import { OwnableAndWriteAccess } from "../../../mud/OwnableAndWriteAccess.sol";
-import { ERC1155BaseSystem } from "../../../token/ERC1155/ERC1155BaseSystem.sol";
+import { OwnableWritable } from "@latticexyz/solecs/src/OwnableWritable.sol";
+import { ERC1155BaseSubsystem } from "../../../token/ERC1155/ERC1155BaseSubsystem.sol";
 
-contract ERC1155BaseSystemTest is BaseTest {
+contract ERC1155BaseSubsystemTest is BaseTest {
   // EXECUTE
 
   function testInvalidExecute() public {
     vm.prank(deployer);
-    vm.expectRevert(ERC1155BaseSystem.ERC1155BaseSystem__InvalidExecuteSelector.selector);
-    ercSystem.execute(abi.encode(
+    vm.expectRevert(ERC1155BaseSubsystem.ERC1155BaseSubsystem__InvalidExecuteSelector.selector);
+    ercSubsystem.execute(abi.encode(
       bytes4(keccak256("invalid selector")),
       bytes('data')
     ));
@@ -25,33 +25,33 @@ contract ERC1155BaseSystemTest is BaseTest {
 
   function testOwnerAuthorizeWriter() public {
     vm.prank(deployer);
-    ercSystem.authorizeWriter(alice);
-    assertTrue(ercSystem.writeAccess(alice));
+    ercSubsystem.authorizeWriter(alice);
+    assertTrue(ercSubsystem.writeAccess(alice));
   }
 
   function testNotOwnerAuthorizeWriter() public {
     vm.prank(alice);
     vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
-    ercSystem.authorizeWriter(alice);
+    ercSubsystem.authorizeWriter(alice);
   }
 
   // MINT
 
   function testMintDirectWriter() public {
     vm.prank(writer);
-    ercSystem.executeSafeMintBatch(alice, _asArray(tokenId), _asArray(100), '');
-    assertEq(ercSystem.balanceOf(alice, tokenId), 100);
+    ercSubsystem.executeSafeMintBatch(alice, _asArray(tokenId), _asArray(100), '');
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 100);
   }
 
   function testMintDirectNotWriter() public {
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
-    ercSystem.executeSafeMintBatch(alice, _asArray(tokenId), _asArray(100), '');
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
+    ercSubsystem.executeSafeMintBatch(alice, _asArray(tokenId), _asArray(100), '');
   }
 
   function _mintExec(address receiver, uint256 _tokenId) internal {
-    ercSystem.execute(abi.encode(
-      ercSystem.executeSafeMintBatch.selector,
+    ercSubsystem.execute(abi.encode(
+      ercSubsystem.executeSafeMintBatch.selector,
       abi.encode(receiver, _asArray(_tokenId), _asArray(100), '')
     ));
   }
@@ -59,19 +59,19 @@ contract ERC1155BaseSystemTest is BaseTest {
   function testMintWriter() public {
     vm.prank(writer);
     _mintExec(alice, tokenId);
-    assertEq(ercSystem.balanceOf(alice, tokenId), 100);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 100);
   }
 
   function testMintNotWriter() public {
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
     _mintExec(alice, tokenId);
   }
 
   function testMintOwner() public {
     vm.prank(deployer);
     _mintExec(alice, tokenId);
-    assertEq(ercSystem.balanceOf(alice, tokenId), 100);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 100);
   }
 
   // BURN
@@ -80,21 +80,21 @@ contract ERC1155BaseSystemTest is BaseTest {
     _defaultMintToAlice();
 
     vm.prank(writer);
-    ercSystem.executeBurnBatch(alice, _asArray(tokenId), _asArray(80));
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
+    ercSubsystem.executeBurnBatch(alice, _asArray(tokenId), _asArray(80));
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
   }
 
   function testBurnDirectNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
-    ercSystem.executeBurnBatch(alice, _asArray(tokenId), _asArray(80));
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
+    ercSubsystem.executeBurnBatch(alice, _asArray(tokenId), _asArray(80));
   }
 
   function _burnExec(address account, uint256 _tokenId) internal {
-    ercSystem.execute(abi.encode(
-      ercSystem.executeBurnBatch.selector,
+    ercSubsystem.execute(abi.encode(
+      ercSubsystem.executeBurnBatch.selector,
       abi.encode(account, _asArray(_tokenId), _asArray(80))
     ));
   }
@@ -104,14 +104,14 @@ contract ERC1155BaseSystemTest is BaseTest {
 
     vm.prank(writer);
     _burnExec(alice, tokenId);
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
   }
 
   function testBurnNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
     _burnExec(alice, tokenId);
   }
 
@@ -120,7 +120,7 @@ contract ERC1155BaseSystemTest is BaseTest {
 
     vm.prank(deployer);
     _burnExec(alice, tokenId);
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
   }
 
   // TRANSFER
@@ -129,17 +129,17 @@ contract ERC1155BaseSystemTest is BaseTest {
     _defaultMintToAlice();
 
     vm.prank(writer);
-    ercSystem.executeSafeTransferBatch(alice, alice, bob, _asArray(tokenId), _asArray(80), '');
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
-    assertEq(ercSystem.balanceOf(bob, tokenId), 80);
+    ercSubsystem.executeSafeTransferBatch(alice, alice, bob, _asArray(tokenId), _asArray(80), '');
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
+    assertEq(ercSubsystem.balanceOf(bob, tokenId), 80);
   }
 
   function testTransferDirectNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
-    ercSystem.executeSafeTransferBatch(alice, alice, bob, _asArray(tokenId), _asArray(80), '');
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
+    ercSubsystem.executeSafeTransferBatch(alice, alice, bob, _asArray(tokenId), _asArray(80), '');
   }
 
   function _transferExec(
@@ -150,8 +150,8 @@ contract ERC1155BaseSystemTest is BaseTest {
     uint256 amount,
     bytes memory data
   ) internal {
-    ercSystem.execute(abi.encode(
-      ercSystem.executeSafeTransferBatch.selector,
+    ercSubsystem.execute(abi.encode(
+      ercSubsystem.executeSafeTransferBatch.selector,
       abi.encode(operator, from, to, _asArray(_tokenId), _asArray(amount), data)
     ));
   }
@@ -161,15 +161,15 @@ contract ERC1155BaseSystemTest is BaseTest {
 
     vm.prank(writer);
     _transferExec(alice, alice, bob, tokenId, 80, '');
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
-    assertEq(ercSystem.balanceOf(bob, tokenId), 80);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
+    assertEq(ercSubsystem.balanceOf(bob, tokenId), 80);
   }
 
   function testTransferNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
     _transferExec(alice, alice, bob, tokenId, 80, '');
   }
 
@@ -178,27 +178,27 @@ contract ERC1155BaseSystemTest is BaseTest {
 
     vm.prank(deployer);
     _transferExec(alice, alice, bob, tokenId, 80, '');
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
-    assertEq(ercSystem.balanceOf(bob, tokenId), 80);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
+    assertEq(ercSubsystem.balanceOf(bob, tokenId), 80);
   }
 
   // APPROVAL FOR ALL
 
   function testApprovalDirectWriter() public {
     vm.prank(writer);
-    ercSystem.executeSetApprovalForAll(alice, bob, true);
-    assertTrue(ercSystem.isApprovedForAll(alice, bob));
+    ercSubsystem.executeSetApprovalForAll(alice, bob, true);
+    assertTrue(ercSubsystem.isApprovedForAll(alice, bob));
   }
 
   function testApprovalDirectNotWriter() public {
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
-    ercSystem.executeSetApprovalForAll(alice, bob, true);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
+    ercSubsystem.executeSetApprovalForAll(alice, bob, true);
   }
 
   function _approvalExec(address account, address operator) internal {
-    ercSystem.execute(abi.encode(
-      ercSystem.executeSetApprovalForAll.selector,
+    ercSubsystem.execute(abi.encode(
+      ercSubsystem.executeSetApprovalForAll.selector,
       abi.encode(account, operator, true)
     ));
   }
@@ -206,18 +206,18 @@ contract ERC1155BaseSystemTest is BaseTest {
   function testApprovalWriter() public {
     vm.prank(writer);
     _approvalExec(alice, bob);
-    assertTrue(ercSystem.isApprovedForAll(alice, bob));
+    assertTrue(ercSubsystem.isApprovedForAll(alice, bob));
   }
 
   function testApprovalNotWriter() public {
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
     _approvalExec(alice, bob);
   }
 
   function testApprovalOwner() public {
     vm.prank(deployer);
     _approvalExec(alice, bob);
-    assertTrue(ercSystem.isApprovedForAll(alice, bob));
+    assertTrue(ercSubsystem.isApprovedForAll(alice, bob));
   }
 }

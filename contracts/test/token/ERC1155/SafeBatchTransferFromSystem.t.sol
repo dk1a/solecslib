@@ -8,7 +8,7 @@ import { BaseTest } from "./BaseTest.sol";
 import { SafeBatchTransferFromSystemMock, ID as SafeBatchTransferFromSystemMockID } from "./SafeBatchTransferFromSystemMock.sol";
 
 // errors
-import { ERC1155BaseInternal } from "../../../token/ERC1155/logic/ERC1155BaseInternal.sol";
+import { IERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/IERC1155BaseInternal.sol";
 
 contract SafeBatchTransferFromSystemTest is BaseTest {
   SafeBatchTransferFromSystemMock transferSystem;
@@ -21,10 +21,9 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
     address components = address(world.components());
     // deploy systems
     transferSystem = new SafeBatchTransferFromSystemMock(world, components);
-    // register systems
     world.registerSystem(address(transferSystem), SafeBatchTransferFromSystemMockID);
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(address(transferSystem));
+    // authorize
+    ercSubsystem.authorizeWriter(address(transferSystem));
 
     vm.stopPrank();
   }
@@ -42,24 +41,24 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
     _expectEmitTransferBatch(alice);
     transferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
 
-    assertEq(ercSystem.balanceOf(alice, tokenId), 20);
-    assertEq(ercSystem.balanceOf(bob, tokenId), 80);
+    assertEq(ercSubsystem.balanceOf(alice, tokenId), 20);
+    assertEq(ercSubsystem.balanceOf(bob, tokenId), 80);
   }
 
   function testExecuteNotOwner() public {
     _defaultMintToAlice();
 
     vm.prank(bob);
-    vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
+    vm.expectRevert(IERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
     transferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
   }
 
   function testExecuteNotOwnerFromForwarder() public {
     vm.prank(writer);
-    ercSystem.executeSafeMintBatch(address(transferSystem), _asArray(tokenId), _asArray(100), '');
+    ercSubsystem.executeSafeMintBatch(address(transferSystem), _asArray(tokenId), _asArray(100), '');
 
     vm.prank(bob);
-    vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
+    vm.expectRevert(IERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
     transferSystem.executeTyped(address(transferSystem), bob, _asArray(tokenId), _asArray(80), '');
   }
 }

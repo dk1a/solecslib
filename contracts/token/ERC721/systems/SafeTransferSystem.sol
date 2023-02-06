@@ -6,20 +6,20 @@ import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
 import { System } from "@latticexyz/solecs/src/System.sol";
 import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
 
-import { ERC721BaseSystem } from "../ERC721BaseSystem.sol";
+import { ERC721BaseSubsystem } from "../ERC721BaseSubsystem.sol";
 
 /**
  * @title Optional forwarder system that wraps executeSafeTransfer into its execute
  */
 contract SafeTransferSystem is System {
-  uint256 immutable erc721BaseSystemId;
+  uint256 immutable erc721BaseSubsystemId;
 
   constructor(
     IWorld _world,
     address _components,
-    uint256 _erc721BaseSystemId
+    uint256 _erc721BaseSubsystemId
   ) System(_world, _components) {
-    erc721BaseSystemId = _erc721BaseSystemId;
+    erc721BaseSubsystemId = _erc721BaseSubsystemId;
   }
 
   function executeTyped(
@@ -39,8 +39,8 @@ contract SafeTransferSystem is System {
       bytes memory data
     ) = abi.decode(arguments, (address, address, uint256, bytes));
 
-    ERC721BaseSystem(
-      getAddressById(world.systems(), erc721BaseSystemId)
+    ERC721BaseSubsystem(
+      getAddressById(world.systems(), erc721BaseSubsystemId)
     ).executeSafeTransfer(
       msg.sender,
       from,

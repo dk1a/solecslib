@@ -5,7 +5,7 @@ pragma solidity ^0.8.17;
 import { BaseTest } from "./BaseTest.sol";
 
 // systems
-import { ID as ERC721BaseSystemID } from "./ERC721BaseSystemMock.sol";
+import { ID as ERC721BaseSubsystemID } from "./ERC721BaseSubsystemMock.sol";
 import { TokenApprovalSystem } from "../../../token/ERC721/systems/TokenApprovalSystem.sol";
 
 contract TokenApprovalSystemTest is BaseTest {
@@ -18,11 +18,10 @@ contract TokenApprovalSystemTest is BaseTest {
 
     address components = address(world.components());
     // deploy systems
-    taSystem = new TokenApprovalSystem(world, components, ERC721BaseSystemID);
-    // register systems
+    taSystem = new TokenApprovalSystem(world, components, ERC721BaseSubsystemID);
     world.registerSystem(address(taSystem), uint256(keccak256("taSystem")));
-    // allows calling ercSystem's execute
-    ercSystem.authorizeWriter(address(taSystem));
+    // authorize
+    ercSubsystem.authorizeWriter(address(taSystem));
 
     vm.stopPrank();
   }
@@ -40,7 +39,7 @@ contract TokenApprovalSystemTest is BaseTest {
     _expectEmitApproval(alice);
     taSystem.executeTyped(bob, tokenId);
 
-    assertEq(ercSystem.getApproved(tokenId), bob);
+    assertEq(ercSubsystem.getApproved(tokenId), bob);
   }
 
   function testExecuteOnSystem() public {
@@ -50,6 +49,6 @@ contract TokenApprovalSystemTest is BaseTest {
     _expectEmitApproval(alice);
     taSystem.executeTyped(address(taSystem), tokenId);
 
-    assertEq(ercSystem.getApproved(tokenId), address(taSystem));
+    assertEq(ercSubsystem.getApproved(tokenId), address(taSystem));
   }
 }

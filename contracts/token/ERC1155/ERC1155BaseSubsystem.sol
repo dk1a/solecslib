@@ -3,66 +3,56 @@
 pragma solidity ^0.8.17;
 
 // erc165
-import { ERC165, IERC165 } from "@solidstate/contracts/introspection/ERC165.sol";
-import { ERC165Storage } from "@solidstate/contracts/introspection/ERC165Storage.sol";
+import { IERC165 } from "@solidstate/contracts/interfaces/IERC165.sol";
+import { ERC165Base } from "@solidstate/contracts/introspection/ERC165/base/ERC165Base.sol";
 import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
 import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 // ECS
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
-//import { System } from "@latticexyz/solecs/src/System.sol";
-import { SystemFacet } from "../../mud/SystemFacet.sol";
+import { Subsystem } from "../../mud/Subsystem.sol";
 
 // ERC1155 logic and data provider
 import { ERC1155BaseLogic } from "./logic/ERC1155BaseLogic.sol";
 import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataComponents.sol";
 
 /**
- * @title ERC1155 and ECS System that uses components.
+ * @title ERC1155 and ECS Subsystem that uses components.
  * @dev ALL component changes MUST go through this system.
- * Call `authorizeWriter` to let another system write to this.
- * 
- * TODO metadata, enumerable?
- * TODO atm not using solecs's System in favour of custom owner+writeAccess
+ * Call `authorizeWriter` to allow another System to call the Subsystem.
+ * ERC1155BaseSubsystem deploys its components itself, you only need to deploy the subsystem.
  */
-contract ERC1155BaseSystem is
-  ERC165,
+contract ERC1155BaseSubsystem is
+  ERC165Base,
   ERC1155BaseDataComponents,
   ERC1155BaseLogic,
-  SystemFacet
+  Subsystem
 {
-  using ERC165Storage for ERC165Storage.Layout;
+  error ERC1155BaseSubsystem__InvalidExecuteSelector();
 
-  error ERC1155BaseSystem__InvalidExecuteSelector();
-
-  // TODO diamond-compatible version?
   constructor(
     IWorld _world,
     address _components,
     uint256 balanceComponentId,
     uint256 operatorApprovalComponentId
-  ) {
-    // initialize base system
-    __SystemFacet_init(_world, _components);
-
+  ) Subsystem(_world, _components) {
     // create components
     // (they're tightly coupled to this system, so making them separately isn't useful)
     __ERC1155BaseDataComponents_init(_world, balanceComponentId, operatorApprovalComponentId);
 
     // register interfaces
-    ERC165Storage.Layout storage erc165 = ERC165Storage.layout();
     // IERC165
-    erc165.setSupportedInterface(type(IERC165).interfaceId, true);
+    _setSupportsInterface(type(IERC165).interfaceId, true);
     // IERC1155
-    erc165.setSupportedInterface(type(IERC1155).interfaceId, true);
+    _setSupportsInterface(type(IERC1155).interfaceId, true);
     // ISystem
-    erc165.setSupportedInterface(type(ISystem).interfaceId, true);
+    _setSupportsInterface(type(ISystem).interfaceId, true);
   }
 
   /**
    * @notice Internally calls the specified execute method, if it's available
    */
-  function execute(bytes memory args) public virtual returns (bytes memory) {
+  function _execute(bytes memory args) internal virtual override returns (bytes memory) {
     (bytes4 executeSelector, bytes memory innerArgs)
       = abi.decode(args, (bytes4, bytes));
 
@@ -118,7 +108,7 @@ contract ERC1155BaseSystem is
       executeSetApprovalForAll(account, operator, status);
 
     } else {
-      revert ERC1155BaseSystem__InvalidExecuteSelector();
+      revert ERC1155BaseSubsystem__InvalidExecuteSelector();
     }
 
     return '';

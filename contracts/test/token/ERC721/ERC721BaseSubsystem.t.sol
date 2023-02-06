@@ -6,16 +6,16 @@ import { BaseTest } from "./BaseTest.sol";
 
 // errors
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
-import { OwnableAndWriteAccess } from "../../../mud/OwnableAndWriteAccess.sol";
-import { ERC721BaseSystem } from "../../../token/ERC721/ERC721BaseSystem.sol";
+import { OwnableWritable } from "@latticexyz/solecs/src/OwnableWritable.sol";
+import { ERC721BaseSubsystem } from "../../../token/ERC721/ERC721BaseSubsystem.sol";
 
 contract ERC721BaseSystemTest is BaseTest {
   // EXECUTE
 
   function testInvalidExecute() public {
     vm.prank(deployer);
-    vm.expectRevert(ERC721BaseSystem.ERC721BaseSystem__InvalidExecuteSelector.selector);
-    ercSystem.execute(abi.encode(
+    vm.expectRevert(ERC721BaseSubsystem.ERC721BaseSubsystem__InvalidExecuteSelector.selector);
+    ercSubsystem.execute(abi.encode(
       bytes4(keccak256("invalid selector")),
       bytes('data')
     ));
@@ -25,33 +25,33 @@ contract ERC721BaseSystemTest is BaseTest {
 
   function testOwnerAuthorizeWriter() public {
     vm.prank(deployer);
-    ercSystem.authorizeWriter(alice);
-    assertTrue(ercSystem.writeAccess(alice));
+    ercSubsystem.authorizeWriter(alice);
+    assertTrue(ercSubsystem.writeAccess(alice));
   }
 
   function testNotOwnerAuthorizeWriter() public {
     vm.prank(alice);
     vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
-    ercSystem.authorizeWriter(alice);
+    ercSubsystem.authorizeWriter(alice);
   }
 
   // MINT
 
   function testMintDirectWriter() public {
     vm.prank(writer);
-    ercSystem.executeSafeMint(alice, tokenId, '');
-    assertEq(ercSystem.ownerOf(tokenId), alice);
+    ercSubsystem.executeSafeMint(alice, tokenId, '');
+    assertEq(ercSubsystem.ownerOf(tokenId), alice);
   }
 
   function testMintDirectNotWriter() public {
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
-    ercSystem.executeSafeMint(alice, tokenId, '');
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
+    ercSubsystem.executeSafeMint(alice, tokenId, '');
   }
 
   function _mintExec(address receiver, uint256 _tokenId) internal {
-    ercSystem.execute(abi.encode(
-      ercSystem.executeSafeMint.selector,
+    ercSubsystem.execute(abi.encode(
+      ercSubsystem.executeSafeMint.selector,
       abi.encode(receiver, _tokenId, '')
     ));
   }
@@ -59,19 +59,19 @@ contract ERC721BaseSystemTest is BaseTest {
   function testMintWriter() public {
     vm.prank(writer);
     _mintExec(alice, tokenId);
-    assertEq(ercSystem.ownerOf(tokenId), alice);
+    assertEq(ercSubsystem.ownerOf(tokenId), alice);
   }
 
   function testMintNotWriter() public {
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
     _mintExec(alice, tokenId);
   }
 
   function testMintOwner() public {
     vm.prank(deployer);
     _mintExec(alice, tokenId);
-    assertEq(ercSystem.ownerOf(tokenId), alice);
+    assertEq(ercSubsystem.ownerOf(tokenId), alice);
   }
 
   // BURN
@@ -80,21 +80,21 @@ contract ERC721BaseSystemTest is BaseTest {
     _defaultMintToAlice();
 
     vm.prank(writer);
-    ercSystem.executeBurn(tokenId);
-    assertEq(ercSystem.balanceOf(alice), 0);
+    ercSubsystem.executeBurn(tokenId);
+    assertEq(ercSubsystem.balanceOf(alice), 0);
   }
 
   function testBurnDirectNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
-    ercSystem.executeBurn(tokenId);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
+    ercSubsystem.executeBurn(tokenId);
   }
 
   function _burnExec(uint256 _tokenId) internal {
-    ercSystem.execute(abi.encode(
-      ercSystem.executeBurn.selector,
+    ercSubsystem.execute(abi.encode(
+      ercSubsystem.executeBurn.selector,
       abi.encode(_tokenId)
     ));
   }
@@ -104,14 +104,14 @@ contract ERC721BaseSystemTest is BaseTest {
 
     vm.prank(writer);
     _burnExec(tokenId);
-    assertEq(ercSystem.balanceOf(alice), 0);
+    assertEq(ercSubsystem.balanceOf(alice), 0);
   }
 
   function testBurnNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
     _burnExec(tokenId);
   }
 
@@ -120,7 +120,7 @@ contract ERC721BaseSystemTest is BaseTest {
 
     vm.prank(deployer);
     _burnExec(tokenId);
-    assertEq(ercSystem.balanceOf(alice), 0);
+    assertEq(ercSubsystem.balanceOf(alice), 0);
   }
 
   // TRANSFER
@@ -129,16 +129,16 @@ contract ERC721BaseSystemTest is BaseTest {
     _defaultMintToAlice();
 
     vm.prank(writer);
-    ercSystem.executeSafeTransfer(alice, alice, bob, tokenId, '');
-    assertEq(ercSystem.ownerOf(tokenId), bob);
+    ercSubsystem.executeSafeTransfer(alice, alice, bob, tokenId, '');
+    assertEq(ercSubsystem.ownerOf(tokenId), bob);
   }
 
   function testTransferDirectNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
-    ercSystem.executeSafeTransfer(alice, alice, bob, tokenId, '');
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
+    ercSubsystem.executeSafeTransfer(alice, alice, bob, tokenId, '');
   }
 
   function _transferExec(
@@ -148,8 +148,8 @@ contract ERC721BaseSystemTest is BaseTest {
     uint256 _tokenId,
     bytes memory data
   ) internal {
-    ercSystem.execute(abi.encode(
-      ercSystem.executeSafeTransfer.selector,
+    ercSubsystem.execute(abi.encode(
+      ercSubsystem.executeSafeTransfer.selector,
       abi.encode(operator, from, to, _tokenId, data)
     ));
   }
@@ -159,14 +159,14 @@ contract ERC721BaseSystemTest is BaseTest {
 
     vm.prank(writer);
     _transferExec(alice, alice, bob, tokenId, '');
-    assertEq(ercSystem.ownerOf(tokenId), bob);
+    assertEq(ercSubsystem.ownerOf(tokenId), bob);
   }
 
   function testTransferNotWriter() public {
     _defaultMintToAlice();
 
     vm.prank(notWriter);
-    vm.expectRevert(OwnableAndWriteAccess.OwnableAndWriteAccess__NotWriter.selector);
+    vm.expectRevert(OwnableWritable.OwnableWritable__NotWriter.selector);
     _transferExec(alice, alice, bob, tokenId, '');
   }
 
@@ -175,6 +175,6 @@ contract ERC721BaseSystemTest is BaseTest {
 
     vm.prank(deployer);
     _transferExec(alice, alice, bob, tokenId, '');
-    assertEq(ercSystem.ownerOf(tokenId), bob);
+    assertEq(ercSubsystem.ownerOf(tokenId), bob);
   }
 }
