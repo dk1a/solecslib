@@ -1,3 +1,19 @@
+# [0.4.0](https://github.com/dk1a/solecslib/compare/v0.3.1...v0.4.0) (2023-02-06)
+
+
+### Bug Fixes
+
+* update dependencies, make Subsystem local ([77beaae](https://github.com/dk1a/solecslib/commit/77beaae6e3e78ee0a977baae09ac190705012b68))
+
+
+### Features
+
+* add entityFromHash ([a35e478](https://github.com/dk1a/solecslib/commit/a35e4782ee9f9da5e9446e3f0fb2dd6ea0e88545))
+* add ScopedDurationSubsystem ([006b551](https://github.com/dk1a/solecslib/commit/006b551dc1c73b8a4fdcd159c56416784cf01d8d))
+* use Subsystem for ERC721Base and ERC1155Base ([06fc515](https://github.com/dk1a/solecslib/commit/06fc515c75686a2569eb5f5a385a09795590a660))
+
+
+
 ## [0.3.2](https://github.com/dk1a/solecslib/compare/v0.3.1...v0.3.2) (2022-11-30)
 
 
