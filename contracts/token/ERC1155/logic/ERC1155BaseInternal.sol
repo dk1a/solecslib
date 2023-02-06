@@ -5,7 +5,7 @@ pragma solidity ^0.8.17;
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Context } from "@openzeppelin/contracts/utils/Context.sol";
 import { IERC1155Receiver } from '@solidstate/contracts/interfaces/IERC1155Receiver.sol';
-import { IERC1155Internal } from "@solidstate/contracts/interfaces/IERC1155Internal.sol";
+import { IERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/IERC1155BaseInternal.sol";
 
 import { ERC1155BaseVData } from "./ERC1155BaseVData.sol";
 
@@ -16,21 +16,9 @@ import { ERC1155BaseVData } from "./ERC1155BaseVData.sol";
  */
 abstract contract ERC1155BaseInternal is
   Context,
-  IERC1155Internal,
+  IERC1155BaseInternal,
   ERC1155BaseVData
 {
-  error ERC1155Base__ArrayLengthMismatch();
-  error ERC1155Base__BalanceQueryZeroAddress();
-  error ERC1155Base__BurnExceedsBalance();
-  error ERC1155Base__BurnFromZeroAddress();
-  error ERC1155Base__ERC1155ReceiverRejected();
-  error ERC1155Base__ERC1155ReceiverNotImplemented();
-  error ERC1155Base__MintToZeroAddress();
-  error ERC1155Base__NotOwnerOrApproved();
-  error ERC1155Base__SelfApproval();
-  error ERC1155Base__TransferExceedsBalance();
-  error ERC1155Base__TransferToZeroAddress();
-
   function _balanceOf(address account, uint256 id) internal view virtual returns (uint256) {
     if (account == address(0)) revert ERC1155Base__BalanceQueryZeroAddress();
     return _get_balance(account, id);

@@ -8,7 +8,7 @@ import { BaseTest } from "./BaseTest.sol";
 import { SafeTransferSystemMock, ID as SafeTransferSystemMockID } from "./SafeTransferSystemMock.sol";
 
 // errors
-import { ERC721BaseInternal } from "../../../token/ERC721/logic/ERC721BaseInternal.sol";
+import { IERC721BaseInternal } from "@solidstate/contracts/token/ERC721/base/IERC721BaseInternal.sol";
 
 contract SafeTransferSystemTest is BaseTest {
   SafeTransferSystemMock transferSystem;
@@ -44,7 +44,7 @@ contract SafeTransferSystemTest is BaseTest {
     _defaultMintToAlice();
 
     vm.prank(bob);
-    vm.expectRevert(ERC721BaseInternal.ERC721Base__NotOwnerOrApproved.selector);
+    vm.expectRevert(IERC721BaseInternal.ERC721Base__NotOwnerOrApproved.selector);
     transferSystem.executeTyped(alice, bob, tokenId, '');
   }
 
@@ -53,7 +53,7 @@ contract SafeTransferSystemTest is BaseTest {
     ercSubsystem.executeSafeMint(address(transferSystem), tokenId, '');
 
     vm.prank(bob);
-    vm.expectRevert(ERC721BaseInternal.ERC721Base__NotOwnerOrApproved.selector);
+    vm.expectRevert(IERC721BaseInternal.ERC721Base__NotOwnerOrApproved.selector);
     transferSystem.executeTyped(address(transferSystem), bob, tokenId, '');
   }
 }

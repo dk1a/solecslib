@@ -8,7 +8,7 @@ import { BaseTest } from "./BaseTest.sol";
 import { SafeBatchTransferFromSystemMock, ID as SafeBatchTransferFromSystemMockID } from "./SafeBatchTransferFromSystemMock.sol";
 
 // errors
-import { ERC1155BaseInternal } from "../../../token/ERC1155/logic/ERC1155BaseInternal.sol";
+import { IERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/IERC1155BaseInternal.sol";
 
 contract SafeBatchTransferFromSystemTest is BaseTest {
   SafeBatchTransferFromSystemMock transferSystem;
@@ -49,7 +49,7 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
     _defaultMintToAlice();
 
     vm.prank(bob);
-    vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
+    vm.expectRevert(IERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
     transferSystem.executeTyped(alice, bob, _asArray(tokenId), _asArray(80), '');
   }
 
@@ -58,7 +58,7 @@ contract SafeBatchTransferFromSystemTest is BaseTest {
     ercSubsystem.executeSafeMintBatch(address(transferSystem), _asArray(tokenId), _asArray(100), '');
 
     vm.prank(bob);
-    vm.expectRevert(ERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
+    vm.expectRevert(IERC1155BaseInternal.ERC1155Base__NotOwnerOrApproved.selector);
     transferSystem.executeTyped(address(transferSystem), bob, _asArray(tokenId), _asArray(80), '');
   }
 }

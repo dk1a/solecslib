@@ -7,9 +7,13 @@ import { PRBTest } from "@prb/test/src/PRBTest.sol";
 import { World } from "@latticexyz/solecs/src/World.sol";
 
 import { Uint256Component } from "@latticexyz/solecs/src/components/Uint256Component.sol";
+import { 
+  SystemCallbackBareComponent,
+  SystemCallback,
+  executeSystemCallback
+} from "@latticexyz/std-contracts/src/components/SystemCallbackBareComponent.sol";
 import { ScopeComponent } from "../../scoped-value/ScopeComponent.sol";
 import { ValueComponent } from "../../scoped-value/ValueComponent.sol";
-import { SystemCallbackBareComponent, SystemCallback } from "../../mud/SystemCallbackBareComponent.sol";
 
 import { ScopedDurationSubsystem, ScopedDuration } from "../../duration/ScopedDurationSubsystem.sol";
 import { SetValueSystem, ID as SetValueSystemID } from "./SetValueSystem.sol";

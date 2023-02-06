@@ -5,26 +5,15 @@ pragma solidity ^0.8.17;
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Context } from "@openzeppelin/contracts/utils/Context.sol";
 import { IERC721Receiver } from '@solidstate/contracts/interfaces/IERC721Receiver.sol';
-import { IERC721Internal } from "@solidstate/contracts/interfaces/IERC721Internal.sol";
+import { IERC721BaseInternal } from "@solidstate/contracts/token/ERC721/base/IERC721BaseInternal.sol";
 
 import { ERC721BaseVData } from "./ERC721BaseVData.sol";
 
 abstract contract ERC721BaseInternal is
   Context,
-  IERC721Internal,
+  IERC721BaseInternal,
   ERC721BaseVData
 {
-  error ERC721Base__NotOwnerOrApproved();
-  error ERC721Base__SelfApproval();
-  error ERC721Base__BalanceQueryZeroAddress();
-  error ERC721Base__ERC721ReceiverNotImplemented();
-  error ERC721Base__InvalidOwner();
-  error ERC721Base__MintToZeroAddress();
-  error ERC721Base__NonExistentToken();
-  error ERC721Base__NotTokenOwner();
-  error ERC721Base__TokenAlreadyMinted();
-  error ERC721Base__TransferToZeroAddress();
-
   function _balanceOf(address account) internal view virtual returns (uint256) {
     if (account == address(0)) revert ERC721Base__BalanceQueryZeroAddress();
     return _get_balanceOf(account);

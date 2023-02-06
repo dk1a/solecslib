@@ -3,14 +3,14 @@
 pragma solidity ^0.8.17;
 
 // erc165
-import { ERC165, IERC165 } from "@solidstate/contracts/introspection/ERC165.sol";
-import { ERC165Storage } from "@solidstate/contracts/introspection/ERC165Storage.sol";
+import { IERC165 } from "@solidstate/contracts/interfaces/IERC165.sol";
+import { ERC165Base } from "@solidstate/contracts/introspection/ERC165/base/ERC165Base.sol";
 import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
 import { ISystem } from "@latticexyz/solecs/src/interfaces/ISystem.sol";
 
 // ECS
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
-import { Subsystem } from "@latticexyz/solecs/src/Subsystem.sol";
+import { Subsystem } from "../../mud/Subsystem.sol";
 
 // ERC1155 logic and data provider
 import { ERC1155BaseLogic } from "./logic/ERC1155BaseLogic.sol";
@@ -35,13 +35,11 @@ import { ERC1155BaseDataComponents } from "./data-providers/ERC1155BaseDataCompo
  * TODO metadata, enumerable?
  */
 contract ERC1155BaseSubsystem is
-  ERC165,
+  ERC165Base,
   ERC1155BaseDataComponents,
   ERC1155BaseLogic,
   Subsystem
 {
-  using ERC165Storage for ERC165Storage.Layout;
-
   error ERC1155BaseSubsystem__InvalidExecuteSelector();
 
   // TODO diamond-compatible version?
@@ -56,13 +54,12 @@ contract ERC1155BaseSubsystem is
     __ERC1155BaseDataComponents_init(_world, balanceComponentId, operatorApprovalComponentId);
 
     // register interfaces
-    ERC165Storage.Layout storage erc165 = ERC165Storage.layout();
     // IERC165
-    erc165.setSupportedInterface(type(IERC165).interfaceId, true);
+    _setSupportsInterface(type(IERC165).interfaceId, true);
     // IERC1155
-    erc165.setSupportedInterface(type(IERC1155).interfaceId, true);
+    _setSupportsInterface(type(IERC1155).interfaceId, true);
     // ISystem
-    erc165.setSupportedInterface(type(ISystem).interfaceId, true);
+    _setSupportsInterface(type(ISystem).interfaceId, true);
   }
 
   /**

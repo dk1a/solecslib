@@ -3,15 +3,15 @@
 pragma solidity ^0.8.17;
 
 import { IWorld } from "@latticexyz/solecs/src/interfaces/IWorld.sol";
-import { Subsystem } from "@latticexyz/solecs/src/Subsystem.sol";
 import { getAddressById } from "@latticexyz/solecs/src/utils.sol";
-
-import { ScopedValue } from "../scoped-value/ScopedValue.sol";
 import { 
   SystemCallbackBareComponent,
   SystemCallback,
   executeSystemCallback
-} from "../mud/SystemCallbackBareComponent.sol";
+} from "@latticexyz/std-contracts/src/components/SystemCallbackBareComponent.sol";
+
+import { Subsystem } from "../mud/Subsystem.sol";
+import { ScopedValue } from "../scoped-value/ScopedValue.sol";
 
 /// @dev durationEntity = hashed(target, prototype)
 function getDurationEntity(uint256 targetEntity, uint256 protoEntity) pure returns (uint256) {
