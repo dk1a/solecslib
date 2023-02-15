@@ -19,9 +19,9 @@ function getDurationEntity(uint256 targetEntity, uint256 protoEntity) pure retur
 }
 
 /// @dev durationScope = encoded(target, scopeId)
-function getDurationScope(uint256 targetEntity, uint256 timeScopeId) pure returns (bytes memory) {
+function getDurationScope(uint256 targetEntity, uint256 timeScopeId) pure returns (string memory) {
   // scope isn't hashed because it's not an entity, also scopeId may need to be extracted later
-  return abi.encode(targetEntity, timeScopeId);
+  return string(abi.encode(targetEntity, timeScopeId));
 }
 
 struct ScopedDuration {
@@ -151,7 +151,7 @@ contract ScopedDurationSubsystem is Subsystem {
     uint256 entity = getDurationEntity(targetEntity, protoEntity);
     ScopedValue.Self memory sv = _sv();
 
-    (, uint256 timeScopeId) = abi.decode(sv.getScope(entity), (uint256, uint256));
+    (, uint256 timeScopeId) = abi.decode(bytes(sv.getScope(entity)), (uint256, uint256));
     return ScopedDuration({
       timeScopeId: timeScopeId,
       timeValue: sv.getValue(entity)

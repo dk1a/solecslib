@@ -88,8 +88,8 @@ library ScopedValue {
   function getScope(
     Self memory __self,
     uint256 entity
-  ) internal view returns (bytes memory) {
-    return __self.scopeComp.getRawValue(entity);
+  ) internal view returns (string memory) {
+    return __self.scopeComp.getValue(entity);
   }
 
   /**
@@ -97,7 +97,7 @@ library ScopedValue {
    */
   function getEntities(
     Self memory __self,
-    bytes memory scope
+    string memory scope
   ) internal view returns (uint256[] memory entities) {
     return __self.scopeComp.getEntitiesWithValue(scope);
   }
@@ -107,7 +107,7 @@ library ScopedValue {
    */
   function getEntitiesValues(
     Self memory __self,
-    bytes memory scope
+    string memory scope
   ) internal view returns (uint256[] memory entities, uint256[] memory values) {
     entities = getEntities(__self, scope);
     // get values for entities
@@ -127,7 +127,7 @@ library ScopedValue {
    */
   function increaseEntity(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 entity,
     uint256 value
   ) internal returns (bool isUpdate) {
@@ -155,7 +155,7 @@ library ScopedValue {
    */
   function decreaseEntity(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 entity,
     uint256 value
   ) internal returns (bool isUpdate) {
@@ -182,12 +182,12 @@ library ScopedValue {
     */
   function _update(
     Self memory __self,
-    bytes memory newScope,
+    string memory newScope,
     uint256 entity,
     uint256 newValue
   ) private {
     // update scope if necessary
-    if (keccak256(newScope) != keccak256(__self.scopeComp.getRawValue(entity))) {
+    if (keccak256(bytes(newScope)) != keccak256(bytes(__self.scopeComp.getValue(entity)))) {
       __self.scopeComp.set(entity, newScope);
     }
     // decrease value
@@ -201,7 +201,7 @@ library ScopedValue {
    */
   function increaseScope(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 value
   ) internal {
     // zero increase is invalid
@@ -226,7 +226,7 @@ library ScopedValue {
    */
   function decreaseScope(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 value
   ) internal returns (uint256[] memory) {
     // zero decrease is invalid
@@ -288,7 +288,7 @@ library ScopedValue {
    */
   function removeScope(
     Self memory __self,
-    bytes memory scope
+    string memory scope
   ) internal {
     uint256[] memory entities = __self.scopeComp.getEntitiesWithValue(scope);
     for (uint256 i; i < entities.length; i++) {

@@ -27,7 +27,7 @@ struct TimeScope {
 contract ScopedValueRevertHelper {
   function decreaseEntity(
     ScopedValueFromPrototype.Self memory _sv,
-    bytes memory scope,
+    string memory scope,
     uint256 protoEntity,
     uint256 value
   ) public {
@@ -56,18 +56,18 @@ contract ScopedValueFromPrototypeTest is PRBTest {
   uint256 de2 = uint256(keccak256('duration2'));
   uint256 de3 = uint256(keccak256('duration3'));
 
-  bytes roundScope = abi.encode(
+  string roundScope = string(abi.encode(
     TimeScope({
       timeType: bytes4(keccak256("round")),
       entity: targetEntity
     })
-  );
-  bytes turnScope = abi.encode(
+  ));
+  string turnScope = string(abi.encode(
     TimeScope({
       timeType: bytes4(keccak256("turn")),
       entity: targetEntity
     })
-  );
+  ));
 
   function setUp() public {
     // deploy world

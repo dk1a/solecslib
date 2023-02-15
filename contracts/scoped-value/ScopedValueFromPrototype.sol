@@ -83,7 +83,7 @@ library ScopedValueFromPrototype {
   function getScope(
     Self memory __self,
     uint256 protoEntity
-  ) internal view returns (bytes memory) {
+  ) internal view returns (string memory) {
     return __self.sv.getScope(_getInstance(__self, protoEntity));
   }
 
@@ -92,7 +92,7 @@ library ScopedValueFromPrototype {
    */
   function getEntities(
     Self memory __self,
-    bytes memory scope
+    string memory scope
   ) internal view returns (uint256[] memory) {
     return _toPrototypes(
       __self,
@@ -105,7 +105,7 @@ library ScopedValueFromPrototype {
    */
   function getEntitiesValues(
     Self memory __self,
-    bytes memory scope
+    string memory scope
   ) internal view returns (uint256[] memory, uint256[] memory) {
     (uint256[] memory entities, uint256[] memory values) = __self.sv.getEntitiesValues(scope);
     return (_toPrototypes(__self, entities), values);
@@ -121,7 +121,7 @@ library ScopedValueFromPrototype {
    */
   function increaseEntity(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 protoEntity,
     uint256 value
   ) internal returns (bool isUpdate) {
@@ -136,7 +136,7 @@ library ScopedValueFromPrototype {
    */
   function decreaseEntity(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 protoEntity,
     uint256 value
   ) internal returns (bool isUpdate) {
@@ -149,7 +149,7 @@ library ScopedValueFromPrototype {
    */
   function increaseScope(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 value
   ) internal {
     __self.sv.increaseScope(scope, value);
@@ -162,7 +162,7 @@ library ScopedValueFromPrototype {
    */
   function decreaseScope(
     Self memory __self,
-    bytes memory scope,
+    string memory scope,
     uint256 value
   ) internal returns (uint256[] memory removedProtoEntities) {
     return _toPrototypes(
@@ -191,7 +191,7 @@ library ScopedValueFromPrototype {
    */
   function removeScope(
     Self memory __self,
-    bytes memory scope
+    string memory scope
   ) internal {
     __self.sv.removeScope(scope);
   }
