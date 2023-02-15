@@ -1,3 +1,12 @@
+## [0.4.1](https://github.com/dk1a/solecslib/compare/v0.4.0...v0.4.1) (2023-02-15)
+
+
+### Bug Fixes
+
+* use string for ScopeComponent to avoid decoding issues ([9f38b2e](https://github.com/dk1a/solecslib/commit/9f38b2ed4a67d4471e7895e5d13a5e2da72ae73d))
+
+
+
 # [0.4.0](https://github.com/dk1a/solecslib/compare/v0.3.1...v0.4.0) (2023-02-06)
 
 
