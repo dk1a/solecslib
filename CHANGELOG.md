@@ -1,3 +1,12 @@
+## [0.4.2](https://github.com/dk1a/solecslib/compare/v0.4.1...v0.4.2) (2023-02-15)
+
+
+### Bug Fixes
+
+* use BYTES schema type for ScopeComponent ([f2f5b01](https://github.com/dk1a/solecslib/commit/f2f5b01eb96d5f2a6862da8e0345a9493f9fc65c))
+
+
+
 ## [0.4.1](https://github.com/dk1a/solecslib/compare/v0.4.0...v0.4.1) (2023-02-15)
 
 
