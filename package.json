@@ -14,18 +14,18 @@
   "scripts": {
     "prepare": "husky install",
     "test": "forge test && hardhat test",
-    "build": "forge build",
+    "build": "pnpm mud worldgen && pnpm mud tablegen && forge build",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "files": [
     "/contracts/**/*.sol"
   ],
   "dependencies": {
-    "@latticexyz/solecs": "^1.34.0",
-    "@latticexyz/std-contracts": "^1.34.0",
-    "@openzeppelin/contracts": "^4.8.1",
-    "@solidstate/contracts": "^0.0.52",
-    "memmove": "github:dk1a/memmove#ffd71cd77b1708574ef46a667b23ca3a5cc9fa27"
+    "@latticexyz/cli": "2.0.0-alpha.1.177",
+    "@latticexyz/schema-type": "2.0.0-alpha.1.177",
+    "@latticexyz/store": "2.0.0-alpha.1.177",
+    "@latticexyz/world": "2.0.0-alpha.1.177",
+    "@solidstate/contracts": "^0.0.56"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.2.0",
@@ -37,7 +37,7 @@
     "chai": "^4.3.7",
     "conventional-changelog-cli": "^2.2.2",
     "cz-conventional-changelog": "3.3.0",
-    "forge-std": "github:foundry-rs/forge-std#75129776235fe6ebf075b0c8d0fe412092a1ac96",
+    "forge-std": "https://github.com/foundry-rs/forge-std.git#b4f121555729b3afb3c5ffccb62ff4b6e2818fd3",
     "hardhat": "^2.12.2",
     "hardhat-preprocessor": "^0.1.5",
     "husky": "^8.0.2"
