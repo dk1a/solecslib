@@ -1,3 +1,7 @@
+# DEPRECATED
+
+This package was relevant for an old version of MUD. Use MUD's built-in ERC modules.
+
 # solecslib
 ERC1155 and ERC721 Subsystems that use components to store data
 
